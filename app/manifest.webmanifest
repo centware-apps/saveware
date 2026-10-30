@@ -1,0 +1,16 @@
+{
+  "name": "SaveWare",
+  "short_name": "SaveWare",
+  "description": "Maximize Savings Down to the Last Cent. Debts, budget, subscriptions and savings in one private app.",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#06101f",
+  "theme_color": "#06101f",
+  "icons": [
+    { "src": "icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}

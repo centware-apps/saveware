@@ -1,0 +1,1284 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#06101f">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="SaveWare">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="64x64" href="favicon-64.png">
+<link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600;700;800&display=swap" rel="stylesheet">
+<title>SaveWare — Maximize Savings Down to the Last Cent</title>
+<style>
+:root{--slg:#000;--bg:#eef3f8;--panel:#fff;--ink:#06101f;--mute:#566478;--muted:#566478;--line:#d6e0ea;--field:#f7fafc;--blue:#0a6cff;--blue2:#00b4ff;--green:#0f9d35;--warn:#a85f00;--bad:#c93030;--grad:linear-gradient(180deg,#00b4ff,#0050ff);--rim:linear-gradient(135deg,#00b4ff,#0a6cff 55%,#0f9d35);
+color-scheme:light dark;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#000;--slg:#fff;--panel:#09101a;--ink:#fff;--mute:#8d9bb0;--muted:#8d9bb0;--line:#1b2738;--field:#03070d;--blue:#2a8cff;--green:#2be35a;--warn:#ffb020;--bad:#ff6b6b;--rim:linear-gradient(135deg,#00b4ff,#2a8cff 55%,#2be35a)}}
+:root[data-theme="dark"]{--bg:#000;--slg:#fff;--panel:#09101a;--ink:#fff;--mute:#8d9bb0;--muted:#8d9bb0;--line:#1b2738;--field:#03070d;--blue:#2a8cff;--green:#2be35a;--warn:#ffb020;--bad:#ff6b6b;--rim:linear-gradient(135deg,#00b4ff,#2a8cff 55%,#2be35a)}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%;scroll-padding-top:calc(env(safe-area-inset-top,0px) + 52px)}
+body{margin:0;background:var(--bg);color:var(--ink);font:500 15px/1.45 Montserrat,system-ui,-apple-system,"Segoe UI",sans-serif}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);background:var(--panel);z-index:30}
+/* Header */
+header.app{max-width:1080px;margin:0 auto;padding:22px 16px 14px}
+.brand{display:flex;align-items:center;gap:12px}
+.brand img.logo{width:56px;height:56px;border-radius:13px;flex:none;display:block}
+.brand h1{margin:0;font-size:30px;font-weight:800;letter-spacing:-.03em;line-height:1}
+.brand h1 i{font-style:normal;background:linear-gradient(180deg,var(--blue2),var(--blue));-webkit-background-clip:text;background-clip:text;color:transparent}
+.brand .tagline{color:var(--slg);font-size:13px;font-weight:700;margin-top:4px}.brand .tagline b{color:var(--green);font-weight:700}
+.brand .by{margin-left:auto;font-size:13px;color:var(--mute);text-align:right}.brand .by strong{color:var(--ink)}
+.toolbar{margin-top:14px;display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.toolbar button{font:inherit;font-weight:700;font-size:13px;background:transparent;color:var(--ink);border:1px solid var(--line);border-radius:9px;padding:8px 13px;cursor:pointer}
+.toolbar button:hover{border-color:var(--blue)}.toolbar button.danger:hover{border-color:var(--bad);color:var(--bad)}
+#savedIndicator{margin-left:auto;font-size:13px;font-weight:600;color:var(--green);min-height:1em}
+/* Tabs */
+nav.tabs{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:var(--panel);border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+nav.tabs .wrap{max-width:1080px;margin:0 auto;padding:0 8px;display:flex;overflow-x:auto;scrollbar-width:none}
+nav.tabs .wrap::-webkit-scrollbar{display:none}
+nav.tabs button{flex:1 0 auto;font:inherit;background:none;border:0;border-bottom:3px solid transparent;color:var(--mute);font-size:13.5px;font-weight:700;padding:13px 14px;cursor:pointer;white-space:nowrap}
+nav.tabs button:hover{color:var(--ink)}
+nav.tabs button.active{color:var(--ink);border-image:linear-gradient(90deg,var(--blue2),var(--green)) 1}
+/* Layout & cards */
+main{max-width:1080px;margin:0 auto;padding:20px 16px 40px}
+.panel{display:none}.panel.active{display:block}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:18px;margin-bottom:16px}
+.card h2{margin:0 0 6px;font-size:18px;font-weight:700;letter-spacing:-.01em}
+.card h3{margin:18px 0 6px;font-size:15px;font-weight:700}
+.card .sub,.sub{color:var(--mute);font-size:13.5px;margin:0 0 12px}
+.sub strong,.sub em{color:var(--ink)}
+.gold-rule{height:3px;width:56px;background:linear-gradient(90deg,var(--blue2),var(--green));border-radius:2px;margin:8px 0 14px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:14px 16px}
+.field label{display:block;font-size:12.5px;font-weight:600;color:var(--mute);margin-bottom:5px}
+.field .hint{font-weight:500;font-size:12px;opacity:.85}
+input[type=text],input[type=number],input[type=date],select,textarea{width:100%;padding:10px 11px;border:1px solid var(--line);border-radius:9px;font:inherit;font-size:14px;background:var(--field);color:var(--ink)}
+input:focus-visible,select:focus-visible,textarea:focus-visible,button:focus-visible{outline:2px solid var(--blue2);outline-offset:1px}
+textarea{resize:vertical;min-height:72px}
+input.money{text-align:right}
+.ro-box{background:var(--field);border:1px solid var(--line);border-radius:9px;padding:9px 12px}
+.ro-box .big{font-size:20px;font-weight:800;letter-spacing:-.02em;font-variant-numeric:tabular-nums}
+/* Buttons */
+.btn{font:inherit;background:var(--grad);color:#fff;border:0;border-radius:9px;padding:10px 16px;font-size:14px;font-weight:700;cursor:pointer}
+.btn:hover{filter:brightness(1.08)}
+.btn.secondary{background:transparent;color:var(--ink);border:1px solid var(--line)}.btn.secondary:hover{border-color:var(--blue);filter:none}
+.btn.small{padding:6px 11px;font-size:13px}
+.btn.gold{background:var(--grad);color:#fff}
+.icon-btn{font:inherit;background:none;border:1px solid transparent;color:var(--mute);font-size:14px;cursor:pointer;padding:4px 8px;border-radius:8px}
+.icon-btn:hover{color:var(--bad)}
+/* Tables */
+.tbl-wrap{overflow-x:auto;margin:0 -4px;padding:0 4px}
+table{border-collapse:collapse;width:100%;font-size:14px}
+th{color:var(--mute);text-align:left;padding:8px 9px;font-size:12px;font-weight:600;white-space:nowrap;border-bottom:1px solid var(--line)}
+td{padding:6px 9px;border-bottom:1px solid var(--line);vertical-align:middle;font-variant-numeric:tabular-nums}
+td input,td select{padding:7px 8px;font-size:13.5px}
+td.num,th.num{text-align:right}
+td input.money{width:104px}td input.day{width:64px}
+tfoot td{font-weight:800;background:var(--field)!important;border-top:1px solid var(--blue2);border-bottom:0}
+/* Results & callouts */
+.results{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:16px}
+.result-box{border:1px solid transparent;border-radius:14px;padding:16px;background:linear-gradient(var(--panel),var(--panel)) padding-box,var(--rim) border-box}
+.result-box.compare{border:1px solid var(--line);background:var(--panel)}
+.result-box h3{margin:0 0 8px;color:var(--mute);font-size:12.5px;font-weight:600}
+.result-box .big{font-size:clamp(28px,5vw,38px);font-weight:800;letter-spacing:-.04em;line-height:1.1;font-variant-numeric:tabular-nums}
+.result-box dl{margin:12px 0 0;padding-top:10px;border-top:1px solid var(--line);display:grid;grid-template-columns:auto 1fr;gap:4px 10px;font-size:13.5px}
+.result-box dt{color:var(--mute)}.result-box dd{margin:0;text-align:right;font-weight:700;font-variant-numeric:tabular-nums}
+.savings-banner{margin-top:16px;border:1px solid transparent;background:linear-gradient(var(--panel),var(--panel)) padding-box,var(--rim) border-box;border-radius:14px;padding:14px 18px;font-size:15.5px;font-weight:600;text-align:center}
+.savings-banner strong{color:var(--green)}
+.warn{background:color-mix(in srgb,var(--bad) 12%,transparent);border:1px solid var(--bad);color:var(--bad);border-radius:10px;padding:10px 14px;font-size:13.5px;margin:8px 0}
+.note{background:color-mix(in srgb,var(--warn) 12%,transparent);border:1px solid var(--warn);border-radius:10px;padding:10px 14px;font-size:13.5px;margin:10px 0}
+.ok-pill{display:inline-block;padding:5px 12px;border-radius:999px;font-weight:700;font-size:13px}
+.ok-pill.yes{background:color-mix(in srgb,var(--green) 14%,transparent);color:var(--green);border:1px solid var(--green)}
+.ok-pill.no{background:color-mix(in srgb,var(--bad) 14%,transparent);color:var(--bad);border:1px solid var(--bad)}
+.badge-warn{display:inline-block;color:var(--bad);border:1px solid var(--bad);border-radius:6px;font-size:12px;font-weight:700;padding:1px 7px;white-space:nowrap}
+/* Bars */
+.bar{height:16px;background:var(--line);border-radius:8px;overflow:hidden}
+.bar>div{height:100%;background:linear-gradient(90deg,var(--blue2),var(--green));border-radius:8px;transition:width .25s}
+.fund,.stage,.paycheck{border:1px solid var(--line);border-radius:12px;padding:14px 16px;margin-bottom:14px;background:var(--field)}
+.fund h4,.stage h4,.paycheck h4{margin:0 0 10px;font-size:15px;font-weight:700;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.fund .meta,.stage .meta{font-size:13px;color:var(--mute);margin-top:8px;display:flex;flex-wrap:wrap;gap:6px 22px}
+.fund .meta strong,.stage .meta strong{color:var(--ink);font-variant-numeric:tabular-nums}
+/* Toggle */
+.toggle{display:inline-flex;border:1px solid var(--line);border-radius:999px;overflow:hidden}
+.toggle button{font:inherit;background:transparent;color:var(--mute);border:0;padding:9px 18px;font-size:14px;font-weight:700;cursor:pointer}
+.toggle button.active{background:var(--grad);color:#fff}
+/* Check-in */
+.check-item{display:flex;gap:10px;align-items:flex-start;padding:9px 0;border-bottom:1px solid var(--line);font-size:14.5px}
+.check-item input{width:20px;height:20px;margin-top:2px;accent-color:var(--blue2);flex:none}
+.check-item.done span{color:var(--mute);text-decoration:line-through}
+/* Formulas */
+.formula{background:var(--field);border:1px solid var(--line);border-left:3px solid var(--blue2);border-radius:9px;padding:12px 16px;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:13.5px;margin:8px 0;overflow-x:auto;white-space:nowrap}
+.rule-num{display:inline-flex;width:26px;height:26px;border-radius:50%;background:var(--grad);color:#fff;font-weight:800;font-size:13px;align-items:center;justify-content:center;margin-right:10px;flex:none}
+.rule{display:flex;align-items:flex-start;margin:10px 0;font-size:14.5px}
+footer.app{max-width:1080px;margin:0 auto;padding:0 16px 34px;color:var(--mute);font-size:12px;line-height:1.5;text-align:center}
+.empty-msg{color:var(--mute);padding:10px 0;font-size:13.5px}
+@media(prefers-reduced-motion:reduce){.bar>div{transition:none}}
+@media(max-width:640px){.brand h1{font-size:26px}.brand img.logo{width:46px;height:46px}.brand .by{display:none}#savedIndicator{margin-left:0;width:100%}td input.money{width:88px}.card{padding:15px 14px}}
+@media print{
+:root,:root:not([data-theme="light"]),:root[data-theme="dark"]{--slg:#000;--bg:#fff;--panel:#fff;--ink:#000;--mute:#444;--muted:#444;--line:#ccc;--field:#fff;--blue:#0a6cff;--green:#0f7a2c;--bad:#b42323;--warn:#8a4b00}
+body::before{display:none}
+.brand h1 i{background:none;color:var(--blue);-webkit-text-fill-color:currentColor}
+nav.tabs,.toolbar,.no-print{display:none!important}
+main{padding:0;max-width:none}
+.panel{display:block!important;page-break-before:always}.panel:first-of-type{page-break-before:avoid}
+.card{page-break-inside:avoid}
+}
+.sb-chips{display:flex;flex-wrap:wrap;gap:6px;margin:6px 0 12px}.sb-chips button{font:inherit;font-size:12.5px;font-weight:600;color:var(--mute);background:transparent;border:1px solid var(--line);border-radius:99px;padding:6px 11px;cursor:pointer}.sb-chips button:hover{border-color:var(--blue);color:var(--ink)}
+.sb-top{display:flex;justify-content:space-between;gap:12px;align-items:flex-start}.sb-n{font-size:15px}.sb-m{font-size:12.5px;color:var(--mute);font-weight:600;margin-top:2px}.sb-r{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+.sb-acts{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px;align-items:center}
+.sb-item.cx .sb-n,.sb-item.cx .sb-r b{text-decoration:line-through;opacity:.55}.sb-item.cx .btn.on{background:var(--green);color:#fff;border-color:var(--green)}
+.sb-bd{display:inline-block;font-size:11px;font-weight:700;border:1px solid var(--warn);color:var(--warn);border-radius:6px;padding:1px 7px;margin-left:6px}
+.sb-due{display:flex;justify-content:space-between;gap:10px;padding:8px 0;border-top:1px solid var(--line);font-size:13.5px}.sb-due:first-child{border-top:0}
+.sb-bar{display:flex;height:14px;border-radius:7px;overflow:hidden;background:var(--line);margin-bottom:10px}.sb-lg{display:grid;gap:6px;font-size:13px}.sb-lg div{display:flex;align-items:center;gap:8px}.sb-lg b{margin-left:auto;font-variant-numeric:tabular-nums}.sb-dot{width:10px;height:10px;border-radius:3px;flex:none}
+.sb-ck{display:flex;gap:8px;align-items:center;font-size:13px;font-weight:600;margin-top:27px}.sb-ck input{width:18px;height:18px;accent-color:var(--blue2)}
+.dash{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:10px}.tile{background:var(--field);border:1px solid var(--line);border-radius:12px;padding:12px}.tile small{display:block;color:var(--mute);font-weight:600;font-size:12px;margin-bottom:2px}.tile b{font-size:17px;font-weight:800}.chk{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}.chk button{font:inherit;font-size:12.5px;font-weight:700;background:transparent;color:var(--mute);border:1px solid var(--line);border-radius:99px;padding:6px 12px;cursor:pointer}.chk button.ok{color:var(--green);border-color:var(--green)}
+</style>
+</head>
+<body>
+<header class="app">
+  <div class="brand">
+    <img class="logo" src="data:image/png;base64,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" width="56" height="56" alt="SaveWare logo">
+    <div><h1>Save<i>Ware</i></h1><div class="tagline"><b>Maximize Savings</b> Down to the Last Cent</div></div>
+    <span class="by">by <strong>CentWare</strong></span>
+  </div>
+  <div class="toolbar no-print">
+    <button id="btnExport" type="button">&#8681; Export data (JSON)</button>
+    <button id="btnImport" type="button">&#8679; Import data</button>
+    <input type="file" id="fileImport" accept=".json,application/json" style="display:none">
+    <button id="btnPrint" type="button">&#128424; Print</button>
+    <button id="btnReset" type="button" class="danger">Reset all data</button>
+    <span id="savedIndicator"></span>
+  </div>
+</header>
+
+<nav class="tabs no-print">
+  <div class="wrap" id="tabBar">
+    <button type="button" data-tab="snapshot" class="active">1 · Money Snapshot</button>
+    <button type="button" data-tab="debts">2 · Debts &amp; Payoff Plan</button>
+    <button type="button" data-tab="budget">3 · Paycheck Budget</button>
+    <button type="button" data-tab="subs">4 · Subscriptions</button>
+    <button type="button" data-tab="funds">5 · Sinking Funds</button>
+    <button type="button" data-tab="ladder">6 · Emergency Fund</button>
+    <button type="button" data-tab="checkin">7 · Check-In</button>
+    <button type="button" data-tab="formulas">8 · Formulas</button>
+  </div>
+</nav>
+
+<main>
+<!-- ======================= 1 · MONEY SNAPSHOT ======================= -->
+<section class="panel active" id="panel-snapshot">
+  <div class="card" id="dashCard"></div>
+  <div class="card">
+    <h2>Start Here — Your Money Snapshot</h2>
+    <div class="gold-rule"></div>
+    <p class="sub">Fill this in <em>before</em> you change anything. No judgement — this is a photograph, not a verdict. (From §1 of the SaveWare workbook.)</p>
+    <div class="grid">
+      <div class="field"><label for="snapChecking">Money in checking today</label><input class="money" inputmode="decimal" type="number" step="0.01" min="0" id="snapChecking" placeholder="0.00"></div>
+      <div class="field"><label for="snapSavings">Money in savings today</label><input class="money" inputmode="decimal" type="number" step="0.01" min="0" id="snapSavings" placeholder="0.00"></div>
+      <div class="field"><label>Total debt <span class="hint">(auto — from the Debts tab, cards + loans, not mortgage)</span></label><div class="ro-box"><span class="big" id="snapTotalDebt">$0</span></div></div>
+      <div class="field"><label for="snapTakeHome">Total monthly take-home pay <span class="hint">(all jobs/household)</span></label><input class="money" inputmode="decimal" type="number" step="0.01" min="0" id="snapTakeHome" placeholder="0.00"></div>
+      <div class="field"><label for="snapPaydays">Number of paydays per month <span class="hint">(average)</span></label><input type="number" step="0.5" min="0" id="snapPaydays" placeholder="2"></div>
+      <div class="field"><label for="snapWorry">The bill you worry about most</label><input type="text" id="snapWorry" placeholder="e.g. the rent, a card payment…"></div>
+      <div class="field" style="grid-column:1/-1"><label for="snapGoal">One thing you want money <em>for</em> in the next 12 months</label><input type="text" id="snapGoal" placeholder="e.g. a holiday, a car repair cushion, being card-free…"></div>
+      <div class="field" style="grid-column:1/-1"><label for="snapWhy">My &ldquo;why&rdquo; <span class="hint">(write it — you'll re-read this in hard months)</span></label><textarea id="snapWhy" placeholder="Why does getting this money system working matter to you?"></textarea></div>
+    </div>
+  </div>
+  <div class="card">
+    <h3>How SaveWare works</h3>
+    <p class="sub" style="margin-bottom:0">Budget by <strong>paycheck</strong>, not by month. List every debt, pick a payoff method, give every dollar of each paycheck an assignment, and save on purpose with sinking funds. Work through the tabs in order — everything saves automatically on this device as you type. Your data never leaves your computer.</p>
+  </div>
+</section>
+
+<!-- ======================= 2 · DEBTS & PAYOFF PLAN ======================= -->
+<section class="panel" id="panel-debts">
+  <div class="card">
+    <h2>Step 1 — List Every Debt (Debt Inventory)</h2>
+    <div class="gold-rule"></div>
+    <p class="sub">Pull every statement. List <em>everything</em> except a home mortgage. If you're not sure, check your free credit reports. (§3)</p>
+    <div class="tbl-wrap">
+      <table id="debtTable">
+        <thead><tr>
+          <th>Lender / Card</th><th>Type</th><th class="num">Balance $</th><th class="num">APR %</th>
+          <th class="num">Minimum $/mo</th><th class="num">Due day</th><th class="num">Interest $/mo</th><th class="no-print"></th>
+        </tr></thead>
+        <tbody id="debtBody"></tbody>
+        <tfoot><tr>
+          <td colspan="2">TOTALS</td>
+          <td class="num" id="debtTotalBalance">$0</td><td></td>
+          <td class="num" id="debtTotalMin">$0</td><td></td>
+          <td class="num" id="debtTotalInterest">$0</td><td class="no-print"></td>
+        </tr></tfoot>
+      </table>
+    </div>
+    <p id="debtEmpty" class="empty-msg" style="display:none">No debts yet. Add your first debt below — or load the book's worked example to see the planner in action.</p>
+    <div class="no-print" style="margin-top:12px;display:flex;gap:10px;flex-wrap:wrap">
+      <button class="btn" id="btnAddDebt" type="button">+ Add a debt</button>
+      <button class="btn secondary" id="btnLoadExample" type="button">Load Maya example (from the book)</button>
+    </div>
+    <div id="debtWarnings"></div>
+  </div>
+
+  <div class="card">
+    <h2>Step 5 — Choose Your Payoff Method</h2>
+    <div class="gold-rule"></div>
+    <p class="sub">You pay minimums on everything. Your extra money goes to ONE debt. (§7)</p>
+    <div class="grid" style="align-items:end">
+      <div class="field">
+        <label>Payoff method</label>
+        <div class="toggle" id="methodToggle">
+          <button type="button" data-method="snowball">Snowball</button>
+          <button type="button" data-method="avalanche">Avalanche</button>
+        </div>
+      </div>
+      <div class="field"><label for="extraPerPaycheck">Extra money per paycheck $</label><input class="money" inputmode="decimal" type="number" step="0.01" min="0" id="extraPerPaycheck" placeholder="0"></div>
+      <div class="field"><label for="paychecksPerMonth">Paychecks per month</label><input type="number" step="0.5" min="0.5" id="paychecksPerMonth" placeholder="2"></div>
+      <div class="field"><label>Extra per month</label><div class="ro-box"><span class="big" id="extraPerMonthOut">$0</span></div></div>
+    </div>
+    <p class="sub" style="margin-top:12px"><strong>Snowball</strong> — attack the smallest <strong>balance</strong> first: quick wins → motivation → you stick with it. <strong>Avalanche</strong> — attack the highest <strong>APR</strong> first: least interest paid → mathematically cheapest. There is no wrong choice — there is only the one you'll still be doing in month six. When a debt hits $0, its whole payment (minimum + extra) rolls into the next target — that rolling amount is where the speed comes from.</p>
+    <div id="planResults"></div>
+    <h3>Your payoff order</h3>
+    <div class="tbl-wrap">
+      <table>
+        <thead><tr><th>#</th><th>Debt</th><th class="num">Balance $</th><th class="num">APR %</th><th class="num">Minimum $</th><th class="num">Interest you'll pay $</th><th class="num">Cleared in month</th></tr></thead>
+        <tbody id="payoffBody"></tbody>
+      </table>
+    </div>
+    <p class="sub" style="margin-top:10px">Model: fixed minimums, interest charged monthly on the balance, extra money (plus the minimums of debts already cleared) aimed at one target debt at a time. Illustrative estimate — missed payments, new charges, or rate changes alter it. (§8, §21)</p>
+  </div>
+</section>
+
+<!-- ======================= 3 · PAYCHECK BUDGET ======================= -->
+<section class="panel" id="panel-budget">
+  <div class="card">
+    <h2>Step 4 — Build Your Paycheck Budget</h2>
+    <div class="gold-rule"></div>
+    <p class="sub">Split your plan across your actual paydays. Bills are assigned to the paycheck <em>before</em> their due date — never the one after. Every paycheck must balance: <strong>Assigned total = that paycheck's take-home</strong>. The order matters: essentials → minimums → target debt/savings → lifestyle. If the money runs out before lifestyle, that's information, not failure. (§6)</p>
+    <div id="paycheckList"></div>
+    <button class="btn no-print" id="btnAddPaycheck" type="button">+ Add a paycheck</button> <button class="btn secondary no-print" id="btnAutofill" type="button">⚡ Auto-fill from my plan</button><p class="sub" id="autofillMsg" style="margin-top:10px"></p>
+  </div>
+</section>
+
+<!-- ======================= 4 · SINKING FUNDS ======================= -->
+<section class="panel" id="panel-subs">
+  <div class="card">
+    <h2>Subscription Audit: Find Every Charge Draining Your Money</h2>
+    <div class="gold-rule"></div>
+    <p class="sub">Most people forget at least a few subscriptions. List yours, mark the ones you will cancel, and send the savings straight to your debt plan. Enter the price your card is actually charged, since prices change and may include tax.</p>
+    <div id="subDash"></div>
+    <div class="no-print" style="margin-top:12px"><button class="btn secondary small" id="btnSubCopy" type="button">Copy my summary</button> <span id="subCopyMsg" class="sub" style="margin-left:8px"></span></div>
+  </div>
+  <div class="card">
+    <h2 id="subFormTitle">Add a subscription</h2>
+    <div class="gold-rule"></div>
+    <p class="sub" style="margin-bottom:6px">Quick start: tap a name, then enter your price.</p>
+    <div class="sb-chips no-print" id="sbChips"></div>
+    <div class="grid">
+      <div class="field"><label for="sbName">Name</label><input type="text" id="sbName" placeholder="e.g. Netflix" autocomplete="off"></div>
+      <div class="field"><label for="sbAmt">Price you are charged $</label><input class="money" inputmode="decimal" type="number" step="0.01" min="0" id="sbAmt" placeholder="0.00"></div>
+      <div class="field"><label for="sbCyc">Billed</label><select id="sbCyc"><option value="m">Monthly</option><option value="y">Yearly</option><option value="q">Every 3 months</option><option value="w">Weekly</option></select></div>
+      <div class="field"><label for="sbNext">Next charge date <span class="hint">(optional)</span></label><input type="date" id="sbNext"></div>
+      <div class="field"><label for="sbCat">Category</label><select id="sbCat"></select></div>
+      <div class="field"><label for="sbUse">How often do you use it?</label><select id="sbUse"><option value="">Not sure</option></select></div>
+      <div class="field"><label class="sb-ck"><input type="checkbox" id="sbTrial"> Free trial: the date is when billing starts</label></div>
+    </div>
+    <div class="no-print" style="margin-top:14px"><button class="btn" id="btnSubAdd" type="button">Add subscription</button> <button class="btn secondary" id="btnSubCancel" type="button" style="display:none">Cancel edit</button></div>
+    <p class="sub" id="sbMsg" style="margin:10px 0 0" role="status"></p>
+  </div>
+  <div class="card">
+    <h2>Your subscriptions</h2>
+    <div class="gold-rule"></div>
+    <div id="subList"></div>
+  </div>
+  <div class="card">
+    <h2>Put your savings to work</h2>
+    <div class="gold-rule"></div>
+    <div id="subDebt"></div>
+  </div>
+  <div class="results">
+    <div class="card" style="margin:0"><h2>Coming up (30 days)</h2><div class="gold-rule"></div><div id="subDue"></div></div>
+    <div class="card" style="margin:0"><h2>Where it goes</h2><div class="gold-rule"></div><div class="sb-bar" id="subBar"></div><div class="sb-lg" id="subLg"></div></div>
+  </div>
+  <div class="card no-print" style="margin-top:16px">
+    <h2>Calendar reminders</h2>
+    <div class="gold-rule"></div>
+    <p class="sub">Get a phone alert before every renewal and before each free trial turns into a charge. Renewals repeat automatically, and anything you marked to cancel gets a one-time &ldquo;cancel before it renews&rdquo; alert. Works with Apple, Google and Outlook calendars.</p>
+    <div class="grid"><div class="field"><label for="sbRemind">Remind me</label><select id="sbRemind"><option value="0">On the day</option><option value="1">1 day before</option><option value="2">2 days before</option><option value="3">3 days before</option><option value="5">5 days before</option><option value="7">1 week before</option></select></div></div>
+    <div style="margin-top:14px"><button class="btn" id="btnSubIcs" type="button">Download reminders</button></div>
+    <p class="sub" id="sbRmsg" style="margin:10px 0 0" role="status"></p>
+  </div>
+</section>
+
+<!-- ======================= 4 · SINKING FUNDS ======================= -->
+<section class="panel" id="panel-funds">
+  <div class="card">
+    <h2>Step 8 — Sinking Funds: Stop &ldquo;Surprise&rdquo; Expenses Ruining the Month</h2>
+    <div class="gold-rule"></div>
+    <p class="sub">Car repairs, holidays, and annual insurance aren't emergencies — they're predictable. A sinking fund = expected cost ÷ months until it's due, saved a little every paycheck. Keep the money in a separate savings account if you can — money you can see in your checking account gets spent. (§10, §16)</p>
+    <div id="fundList"></div>
+    <p id="fundEmpty" class="empty-msg" style="display:none">No sinking funds yet. Classic starters: car repairs ($600 over 12 months), annual insurance premium, holidays/birthdays, back-to-school, home repairs, vet care.</p>
+    <button class="btn no-print" id="btnAddFund" type="button">+ Add a sinking fund</button>
+  </div>
+</section>
+
+<!-- ======================= 5 · EMERGENCY FUND LADDER ======================= -->
+<section class="panel" id="panel-ladder">
+  <div class="card">
+    <h2>Step 9 — Your Emergency Fund Ladder</h2>
+    <div class="gold-rule"></div>
+    <p class="sub">Build in stages so you get wins early. Don't try to jump to Stage 3 while carrying 24% card debt — Stage 1 first, then debt, then Stages 2–3. (§11)</p>
+    <div class="grid">
+      <div class="field"><label for="ladEssentials">My essentials total per month $ <span class="hint">(housing + utilities + groceries + transport + insurance + minimums)</span></label><input class="money" inputmode="decimal" type="number" step="0.01" min="0" id="ladEssentials" placeholder="0.00"></div>
+      <div class="field"><label for="ladStage1Target">Stage 1 target $ <span class="hint">(starter: $500–$1,000)</span></label><input class="money" inputmode="decimal" type="number" step="1" min="0" id="ladStage1Target"></div>
+      <div class="field"><label for="ladStage3Months">Stage 3 size <span class="hint">(months of essentials: 3 if two incomes/stable job, 6 if one income/freelance)</span></label><input type="number" step="1" min="1" max="12" id="ladStage3Months"></div>
+    </div>
+    <div style="margin-top:14px">
+      <div class="stage">
+        <h4>Stage 1 — Starter <span style="font-weight:400;color:var(--muted);font-size:13.5px">A flat tyre or broken phone doesn't go on a card</span></h4>
+        <div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(180px,1fr))">
+          <div class="field"><label>Saved so far $</label><input class="money" inputmode="decimal" type="number" step="0.01" min="0" id="ladSaved1"></div>
+          <div class="field"><label>Target</label><div class="ro-box"><span class="big" id="ladTarget1Out">$0</span></div></div>
+        </div>
+        <div class="bar" style="margin-top:10px"><div id="ladBar1" style="width:0%"></div></div>
+        <div class="meta"><span><strong id="ladPct1">0%</strong> there</span><span><strong id="ladLeft1">$0</strong> to go</span></div>
+      </div>
+      <div class="stage">
+        <h4>Stage 2 — Cushion <span style="font-weight:400;color:var(--muted);font-size:13.5px">1 month of essentials — one bad month doesn't create new debt</span></h4>
+        <div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(180px,1fr))">
+          <div class="field"><label>Saved so far $</label><input class="money" inputmode="decimal" type="number" step="0.01" min="0" id="ladSaved2"></div>
+          <div class="field"><label>Target</label><div class="ro-box"><span class="big" id="ladTarget2Out">$0</span></div></div>
+        </div>
+        <div class="bar" style="margin-top:10px"><div id="ladBar2" style="width:0%"></div></div>
+        <div class="meta"><span><strong id="ladPct2">0%</strong> there</span><span><strong id="ladLeft2">$0</strong> to go</span></div>
+      </div>
+      <div class="stage">
+        <h4>Stage 3 — Security <span style="font-weight:400;color:var(--muted);font-size:13.5px">Job-loss protection</span></h4>
+        <div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(180px,1fr))">
+          <div class="field"><label>Saved so far $</label><input class="money" inputmode="decimal" type="number" step="0.01" min="0" id="ladSaved3"></div>
+          <div class="field"><label>Target</label><div class="ro-box"><span class="big" id="ladTarget3Out">$0</span></div></div>
+        </div>
+        <div class="bar" style="margin-top:10px"><div id="ladBar3" style="width:0%"></div></div>
+        <div class="meta"><span><strong id="ladPct3">0%</strong> there</span><span><strong id="ladLeft3">$0</strong> to go</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ======================= 6 · CHECK-IN ======================= -->
+<section class="panel" id="panel-checkin">
+  <div class="card">
+    <h2>The Weekly 15-Minute Money Check-In</h2>
+    <div class="gold-rule"></div>
+    <p class="sub">Same day, same time, every week. Set a phone reminder now. (§12)</p>
+    <div id="weeklyList"></div>
+    <div class="field" style="margin-top:12px"><label for="feltInput">One sentence: this week money felt…</label><input type="text" id="feltInput" placeholder="e.g. calmer, tight but planned, chaotic…"></div>
+    <button class="btn secondary small no-print" id="btnResetWeek" type="button" style="margin-top:12px">Start a new week (clear checklist)</button>
+  </div>
+  <div class="card">
+    <h2>The Monthly Review <span style="font-size:14px;color:var(--muted);font-weight:400">(one page, 30 minutes)</span></h2>
+    <div class="gold-rule"></div>
+    <p class="sub">Review beats perfection — do this once a month, even the bad months. <em>Especially</em> the bad months. (§13)</p>
+    <div class="grid">
+      <div class="field"><label for="mrMonth">Month</label><input type="text" id="mrMonth" placeholder="e.g. October 2026"></div>
+      <div class="field"><label for="mrIncome">Total income actually received $</label><input class="money" inputmode="decimal" type="number" step="0.01" min="0" id="mrIncome"></div>
+      <div class="field"><label for="mrSpent">Total spent $</label><input class="money" inputmode="decimal" type="number" step="0.01" min="0" id="mrSpent"></div>
+      <div class="field"><label for="mrDebtStart">Total debt at start of month $</label><input class="money" inputmode="decimal" type="number" step="0.01" min="0" id="mrDebtStart"></div>
+      <div class="field"><label for="mrDebtEnd">Total debt at end of month $</label><input class="money" inputmode="decimal" type="number" step="0.01" min="0" id="mrDebtEnd"></div>
+      <div class="field"><label for="mrDebtPaid">Total debt paid off this month $</label><input class="money" inputmode="decimal" type="number" step="0.01" min="0" id="mrDebtPaid"></div>
+      <div class="field"><label for="mrSaved">Savings / sinking funds added $</label><input class="money" inputmode="decimal" type="number" step="0.01" min="0" id="mrSaved"></div>
+      <div class="field"><label for="mrSurprise">Biggest surprise expense</label><input type="text" id="mrSurprise"></div>
+      <div class="field"><label for="mrOver">Category most over budget — why?</label><input type="text" id="mrOver"></div>
+      <div class="field"><label for="mrAdjust">One adjustment for next month (just one)</label><input type="text" id="mrAdjust"></div>
+      <div class="field"><label for="mrWin">Win of the month (any size)</label><input type="text" id="mrWin"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ======================= 7 · FORMULAS ======================= -->
+<section class="panel" id="panel-formulas">
+  <div class="card">
+    <h2>The Rules of This System <span style="font-size:14px;color:var(--muted);font-weight:400">(read once, use forever — §2)</span></h2>
+    <div class="gold-rule"></div>
+    <div class="rule"><span class="rule-num">1</span><span><strong>Budget by paycheck, not by month.</strong> A monthly budget fails when rent is due on the 1st but you get paid on the 5th and the 19th. Every paycheck gets a job <em>before</em> it arrives.</span></div>
+    <div class="rule"><span class="rule-num">2</span><span><strong>Every dollar gets an assignment.</strong> Income − assignments = $0 on paper. That doesn't mean spend it all — &ldquo;savings&rdquo; and &ldquo;debt extra&rdquo; are assignments.</span></div>
+    <div class="rule"><span class="rule-num">3</span><span><strong>Minimums first, extra money second.</strong> Every debt gets its minimum paid on time, every time. Extra money attacks <em>one</em> target debt.</span></div>
+    <div class="rule"><span class="rule-num">4</span><span><strong>Sinking funds beat willpower.</strong> Car repairs, holidays, and annual insurance are not emergencies — they're predictable. Save for them monthly in small amounts.</span></div>
+    <div class="rule"><span class="rule-num">5</span><span><strong>Review beats perfection.</strong> A budget you check for 15 minutes a week beats a perfect budget you abandon in week two.</span></div>
+  </div>
+  <div class="card">
+    <h2>Quick-Reference Formulas (§21)</h2>
+    <div class="gold-rule"></div>
+    <h3>Monthly interest on a debt</h3>
+    <div class="formula">interest = balance × (APR ÷ 100) ÷ 12</div>
+    <p class="sub">SaveWare shows this live for every debt on the Debts tab.</p>
+    <h3>Totals</h3>
+    <div class="formula">total debt = sum of all balances &nbsp;·&nbsp; total minimums = sum of all minimum payments</div>
+    <h3>Months to clear a debt at a fixed payment (approx.)</h3>
+    <div class="formula">months = −LN(1 − monthly interest ÷ payment) ÷ LN(1 + (APR ÷ 100) ÷ 12)</div>
+    <p class="sub">Use the payment you'll <em>actually</em> make (the minimum, or minimum + extra for your target debt). <strong>The guard matters:</strong> if the payment doesn't exceed the month's interest, the balance would never fall — SaveWare warns you with &ldquo;minimum doesn't cover the interest&rdquo; instead of a meaningless number. A 0% APR debt is the simple case: months = balance ÷ payment. In the planner, SaveWare doesn't rely on this formula alone — it runs a full month-by-month simulation, rolling each cleared debt's payment into the next target, which is why its timelines match the workbook's worked example.</p>
+    <h3>Sinking fund per month</h3>
+    <div class="formula">per month = expected cost ÷ months until due</div>
+    <h3>The income check</h3>
+    <div class="formula">sum of all assignments = total take-home</div>
+    <p class="sub" style="margin-bottom:0">A paycheck budget is balanced when its assignments add up to exactly that paycheck's take-home pay. A gap either way is a decision to make on purpose — in the budget, not a surprise at month-end. That's why every paycheck card in SaveWare shows <strong>✓ Balanced</strong> or <strong>⚠ Assigned ≠ paycheck</strong>.</p>
+  </div>
+  <div class="card">
+    <h2>Your Commitment</h2>
+    <div class="gold-rule"></div>
+    <p style="font-size:15.5px;margin:0 0 8px">I will budget by paycheck. I will pay every minimum on time. I will aim my extra money at one debt until it's gone, then roll it to the next. I will check in for 15 minutes every week. I will review once a month — even the bad months. <em>Especially</em> the bad months.</p>
+    <p class="sub" style="margin-bottom:0">You don't need a perfect month. You need a next month that's a little better than this one, repeated. That's the whole system.</p>
+  <h3>Monthly cost of a subscription</h3>
+    <div class="formula">monthly = price &times; 52 &divide; 12 (weekly) &middot; price (monthly) &middot; price &divide; 3 (every 3 months) &middot; price &divide; 12 (yearly)</div>
+    <h3>Cost per use</h3>
+    <div class="formula">cost per use = monthly cost &divide; times you use it per month</div>
+  </div>
+</section>
+</main>
+
+<footer class="app">
+  SaveWare by CentWare — &ldquo;Maximize Savings Down to the Last Cent.&rdquo; Educational budgeting tool, not financial advice. If you are behind on essentials (housing, utilities, food), contact your lenders and a non-profit credit counsellor (e.g. an NFCC member agency in the US) before following a debt-payoff plan. Your data is stored only in this browser, on this device.
+</footer>
+
+<script>
+/* === CORE START === */
+/* SaveWare core logic — pure functions (no DOM). Extracted and unit-tested in Node. */
+function num(v){ var n = parseFloat(v); return isFinite(n) ? n : 0; }
+
+function monthlyInterest(balance, apr){ return num(balance) * (num(apr) / 100) / 12; }
+
+/* The paycheck balance check — same rule and wording as the SaveWare spreadsheet:
+   balanced when |Assigned total − take-home| <= $0.005. */
+function balanceStatus(assignedTotal, takeHome){
+  var balanced = Math.abs(num(assignedTotal) - num(takeHome)) <= 0.005;
+  return { balanced: balanced, label: balanced ? '✓ Balanced' : '⚠ Assigned ≠ paycheck' };
+}
+
+/* Month-by-month payoff simulation (the workbook's model, §8/§21):
+   - interest is charged monthly on the balance
+   - every debt gets its fixed minimum (capped at what it owes)
+   - the extra pool = monthly extra + the minimums of debts cleared in earlier months
+     (the "snowball roll"), aimed at the single current target; if the target clears
+     mid-month, the unspent remainder waits and joins the attack on the next target
+     from the following month (the workbook's model — it reproduces §8 exactly). */
+function simulatePayoff(rawDebts, extraMonthly, method){
+  var ds = [];
+  (rawDebts || []).forEach(function(d){
+    var bal = num(d.balance);
+    if(bal > 0) ds.push({ id: d.id, name: d.lender || d.name || 'Debt', bal: bal, apr: num(d.apr), min: num(d.min), interestPaid: 0, clearedMonth: 0 });
+  });
+  var warnings = [];
+  ds.forEach(function(d){ if(d.apr > 0 && d.min <= monthlyInterest(d.bal, d.apr)) warnings.push(d.name); });
+  var months = 0, totalInterest = 0, CAP = 1200;
+  function anyLeft(){ return ds.some(function(d){ return d.bal > 0.005; }); }
+  while(anyLeft() && months < CAP){
+    months++;
+    ds.forEach(function(d){
+      if(d.bal > 0){ var i = monthlyInterest(d.bal, d.apr); d.bal += i; d.interestPaid += i; totalInterest += i; }
+    });
+    var pool = num(extraMonthly);
+    ds.forEach(function(d){ if(d.clearedMonth && d.clearedMonth < months) pool += d.min; });
+    ds.forEach(function(d){
+      if(d.bal > 0){
+        var p = Math.min(d.min, d.bal); d.bal -= p;
+        if(d.bal <= 0.005){ d.bal = 0; if(!d.clearedMonth) d.clearedMonth = months; }
+      }
+    });
+    var order = ds.filter(function(d){ return d.bal > 0; }).sort(function(a, b){
+      if(method === 'avalanche') return (b.apr - a.apr) || (a.bal - b.bal);
+      return (a.bal - b.bal) || (b.apr - a.apr);
+    });
+    if(order.length && pool > 0){
+      var target = order[0];
+      var pay = Math.min(pool, target.bal); target.bal -= pay;
+      if(target.bal <= 0.005){ target.bal = 0; if(!target.clearedMonth) target.clearedMonth = months; }
+    }
+  }
+  return {
+    months: months, totalInterest: totalInterest, allCleared: !anyLeft(), warnings: warnings,
+    perDebt: ds.map(function(d){ return { id: d.id, name: d.name, clearedMonth: d.clearedMonth, interestPaid: d.interestPaid }; })
+  };
+}
+
+/* Minimums-only baseline: each debt paid at its fixed minimum, nothing rolls. */
+function simulateMinimums(rawDebts){
+  var totalInterest = 0, months = 0, per = [];
+  (rawDebts || []).forEach(function(d){
+    var bal = num(d.balance);
+    if(bal <= 0) return;
+    var apr = num(d.apr), min = num(d.min), m = 0, ip = 0, CAP = 1200;
+    if(min > 0){
+      while(bal > 0.005 && m < CAP){
+        m++;
+        var i = monthlyInterest(bal, apr); bal += i; ip += i;
+        var p = Math.min(min, bal); bal -= p;
+      }
+    }
+    totalInterest += ip;
+    var cleared = (bal <= 0.005) ? m : 0;
+    if(cleared > months) months = cleared;
+    per.push({ name: d.lender || d.name || 'Debt', clearedMonth: cleared, interestPaid: ip });
+  });
+  return { months: months, totalInterest: totalInterest, perDebt: per };
+}
+
+/* The workbook's worked example (§8) — Maya's debts. */
+var MAYA_EXAMPLE = [
+  { lender: 'Store Card',    type: 'Card', balance: 620,  apr: 25.99, min: 25,  due: 15 },
+  { lender: 'Credit Card A', type: 'Card', balance: 2900, apr: 22.99, min: 87,  due: 1 },
+  { lender: 'Credit Card B', type: 'Card', balance: 4600, apr: 19.99, min: 115, due: 21 },
+  { lender: 'Personal Loan', type: 'Loan', balance: 5800, apr: 10.5,  min: 148, due: 5 }
+];
+
+/* The 11 paycheck-budget categories from §6. */
+var DEFAULT_CATEGORIES = [
+  'Housing', 'Utilities / Phone / Internet', 'Groceries', 'Transport', 'Insurance',
+  'Minimum Debt Payments', 'EXTRA to Target Debt', 'Sinking Funds',
+  'Emergency Fund / Savings', 'Fun / Personal', 'Buffer / Misc'
+];
+
+/* The weekly check-in items from §12. */
+var WEEKLY_ITEMS = [
+  'Check checking + savings balances — write them down',
+  'Check target-debt balance — is it lower than last week?',
+  'Any bill due before next payday? Is the money assigned?',
+  'Any unplanned spending? Assign it honestly (which category pays?)',
+  "Move this week's sinking-fund / savings transfer if not automatic"
+];
+/* === CORE END === */
+</script>
+
+<script>
+/* ================= SaveWare app (UI + state) ================= */
+var LS_KEY = 'saveware-data-v1';
+var state = null;
+var idCounter = 0;
+function uid(){ idCounter++; return 'id' + Date.now().toString(36) + idCounter + Math.floor(Math.random() * 1e4); }
+function esc(s){ return String(s == null ? '' : s).replace(/[&<>"']/g, function(c){ return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
+function fmt0(n){ return '$' + Math.round(num(n)).toLocaleString('en-US'); }
+function fmt2(n){ return '$' + num(n).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }); }
+function monthYearFromNow(months){
+  var d = new Date(); d.setDate(1); d.setMonth(d.getMonth() + months);
+  return d.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
+}
+
+function defaultRows(){ return DEFAULT_CATEGORIES.map(function(c){ return { label: c, assigned: 0, actual: 0 }; }); }
+function defaultState(){
+  return {
+    snapshot: { checking: 0, savings: 0, takeHome: 0, paydays: 2, worry: '', goal: '', why: '' },
+    settings: { method: 'snowball', extraPerPaycheck: 0, paychecksPerMonth: 2, subRemind: 3, subRedirect: 0 },
+    debts: [],
+    subs: [],
+    paychecks: [],
+    funds: [],
+    ladder: { essentials: 0, stage1Target: 500, stage3Months: 3, saved1: 0, saved2: 0, saved3: 0 },
+    checkin: { weekly: WEEKLY_ITEMS.map(function(){ return false; }), felt: '',
+      monthly: { month: '', income: 0, spent: 0, debtStart: 0, debtEnd: 0, debtPaid: 0, saved: 0, surprise: '', over: '', adjust: '', win: '' } }
+  };
+}
+function normalizeState(s){
+  var d = defaultState();
+  if(!s || typeof s !== 'object') return d;
+  ['snapshot', 'settings', 'ladder'].forEach(function(k){ if(s[k] && typeof s[k] === 'object'){ for(var p in d[k]){ if(s[k][p] !== undefined) d[k][p] = s[k][p]; } } });
+  if(Array.isArray(s.debts)) d.debts = s.debts;
+  if(Array.isArray(s.paychecks)) d.paychecks = s.paychecks;
+  if(Array.isArray(s.funds)) d.funds = s.funds;
+  if(s.checkin && typeof s.checkin === 'object'){
+    if(Array.isArray(s.checkin.weekly)) d.checkin.weekly = s.checkin.weekly;
+    if(s.checkin.felt !== undefined) d.checkin.felt = s.checkin.felt;
+    if(s.checkin.monthly) { for(var q in d.checkin.monthly){ if(s.checkin.monthly[q] !== undefined) d.checkin.monthly[q] = s.checkin.monthly[q]; } }
+  }
+  function sid(v){ return /^[A-Za-z0-9_-]{1,64}$/.test(String(v || '')) ? String(v) : uid(); }
+  d.debts = d.debts.filter(function(x){ return x && typeof x === 'object'; });
+  d.debts.forEach(function(x){ x.id = sid(x.id); x.lender = String(x.lender || ''); if(['Card','Loan','Other'].indexOf(x.type) < 0) x.type = 'Card'; ['balance','apr','min'].forEach(function(k){ x[k] = num(x[k]); }); x.due = x.due ? num(x.due) : ''; });
+  d.paychecks = d.paychecks.filter(function(x){ return x && typeof x === 'object'; });
+  d.paychecks.forEach(function(x){ x.id = sid(x.id); x.date = /^\d{4}-\d{2}-\d{2}$/.test(x.date) ? x.date : ''; x.takeHome = num(x.takeHome); if(!Array.isArray(x.rows)) x.rows = defaultRows(); x.rows = x.rows.filter(function(r){ return r && typeof r === 'object'; }).map(function(r){ return { label: String(r.label || ''), assigned: num(r.assigned), actual: num(r.actual) }; }); });
+  d.funds = d.funds.filter(function(x){ return x && typeof x === 'object'; });
+  d.funds.forEach(function(x){ x.id = sid(x.id); x.name = String(x.name || ''); x.due = /^\d{4}-\d{2}-\d{2}$/.test(x.due) ? x.due : ''; ['cost','months','saved'].forEach(function(k){ x[k] = num(x[k]); }); });
+  d.subs = [];
+  if(Array.isArray(s.subs)){
+    s.subs.forEach(function(x){
+      if(!x || typeof x !== 'object' || !SUB_CY[x.cyc] || !(num(x.amt) > 0) || !String(x.name || '').trim()) return;
+      d.subs.push({ id: sid(x.id), name: String(x.name).slice(0, 80), amt: num(x.amt), cyc: x.cyc, next: /^\d{4}-\d{2}-\d{2}$/.test(x.next) ? x.next : '',
+        cat: SUB_CATS.indexOf(x.cat) >= 0 ? x.cat : 'Other', use: SUB_USE[x.use] ? x.use : '', trial: !!x.trial, cancel: !!x.cancel });
+    });
+  }
+  d.settings.subRemind = [0, 1, 2, 3, 5, 7].indexOf(num(d.settings.subRemind)) >= 0 ? num(d.settings.subRemind) : 3;
+  d.settings.subRedirect = Math.max(0, num(d.settings.subRedirect));
+  if(d.settings.method !== 'avalanche') d.settings.method = 'snowball';
+  return d;
+}
+function loadState(){
+  try { var raw = localStorage.getItem(LS_KEY); if(raw) return normalizeState(JSON.parse(raw)); } catch(e){}
+  return defaultState();
+}
+function save(){
+  try {
+    try{ renderDash(); }catch(e2){}
+    localStorage.setItem(LS_KEY, JSON.stringify(state));
+    var el = document.getElementById('savedIndicator');
+    if(el) el.textContent = 'Saved ✓ ' + new Date().toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', second: '2-digit' });
+  } catch(e){}
+}
+
+/* ---------- Tabs ---------- */
+function switchTab(name){
+  document.querySelectorAll('#tabBar button').forEach(function(b){ b.classList.toggle('active', b.dataset.tab === name); });
+  document.querySelectorAll('.panel').forEach(function(p){ p.classList.toggle('active', p.id === 'panel-' + name); });
+  if(name === 'subs'){ try{ renderSubs(); }catch(e){} }
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+document.getElementById('tabBar').addEventListener('click', function(e){
+  var b = e.target.closest('button[data-tab]'); if(b) switchTab(b.dataset.tab);
+});
+
+/* ---------- Snapshot ---------- */
+function bindSnapshot(){
+  var s = state.snapshot;
+  var map = { snapChecking: 'checking', snapSavings: 'savings', snapTakeHome: 'takeHome', snapPaydays: 'paydays', snapWorry: 'worry', snapGoal: 'goal', snapWhy: 'why' };
+  Object.keys(map).forEach(function(id){
+    var el = document.getElementById(id);
+    el.value = s[map[id]];
+    el.addEventListener('input', function(){
+      s[map[id]] = (el.type === 'number') ? num(el.value) : el.value;
+      if(id === 'snapPaydays'){ state.settings.paychecksPerMonth = num(el.value); document.getElementById('paychecksPerMonth').value = el.value; updateDebtDerived(); renderFundsDerived(); }
+      save();
+    });
+  });
+}
+function updateSnapshotDebt(){
+  var total = state.debts.reduce(function(sum, d){ return sum + num(d.balance); }, 0);
+  document.getElementById('snapTotalDebt').textContent = fmt0(total);
+}
+
+/* ---------- Debts ---------- */
+var debtBody = document.getElementById('debtBody');
+function renderDebts(){
+  debtBody.innerHTML = state.debts.map(function(d){
+    return '<tr data-did="' + d.id + '">' +
+      '<td><input type="text" data-field="lender" value="' + esc(d.lender) + '" placeholder="e.g. Store Card"></td>' +
+      '<td><select data-field="type">' +
+        ['Card', 'Loan', 'Other'].map(function(t){ return '<option value="' + t + '"' + (d.type === t ? ' selected' : '') + '>' + t + '</option>'; }).join('') +
+      '</select></td>' +
+      '<td><input class="money" inputmode="decimal" type="number" step="0.01" min="0" data-field="balance" value="' + (d.balance === 0 ? '' : d.balance) + '" placeholder="0"></td>' +
+      '<td><input class="money" inputmode="decimal" type="number" step="0.01" min="0" data-field="apr" value="' + (d.apr === 0 ? '' : d.apr) + '" placeholder="0" style="width:78px"></td>' +
+      '<td><input class="money" inputmode="decimal" type="number" step="0.01" min="0" data-field="min" value="' + (d.min === 0 ? '' : d.min) + '" placeholder="0"></td>' +
+      '<td><input class="day" type="number" step="1" min="1" max="31" data-field="due" value="' + (d.due || '') + '" placeholder="—"></td>' +
+      '<td class="num" data-interest="' + d.id + '">$0.00</td>' +
+      '<td class="no-print"><button type="button" class="icon-btn" data-del-debt="' + d.id + '" title="Remove this debt">✕</button></td></tr>';
+  }).join('');
+  document.getElementById('debtEmpty').style.display = state.debts.length ? 'none' : 'block';
+  updateDebtDerived();
+}
+function updateDebtDerived(){
+  var totBal = 0, totMin = 0, totInt = 0;
+  state.debts.forEach(function(d){
+    var i = monthlyInterest(d.balance, d.apr);
+    totBal += num(d.balance); totMin += num(d.min); totInt += i;
+    var cell = debtBody.querySelector('[data-interest="' + d.id + '"]');
+    if(cell) cell.textContent = fmt2(i);
+  });
+  document.getElementById('debtTotalBalance').textContent = fmt0(totBal);
+  document.getElementById('debtTotalMin').textContent = fmt0(totMin);
+  document.getElementById('debtTotalInterest').textContent = fmt2(totInt);
+  updateSnapshotDebt();
+  renderPlanResults();
+}
+function renderPlanResults(){
+  var box = document.getElementById('planResults');
+  var payoffBody = document.getElementById('payoffBody');
+  var warnBox = document.getElementById('debtWarnings');
+  var extraMonthly = num(state.settings.extraPerPaycheck) * num(state.settings.paychecksPerMonth);
+  document.getElementById('extraPerMonthOut').textContent = fmt0(extraMonthly);
+  document.querySelectorAll('#methodToggle button').forEach(function(b){ b.classList.toggle('active', b.dataset.method === state.settings.method); });
+
+  var warnHtml = '';
+  state.debts.forEach(function(d){
+    if(num(d.balance) > 0 && num(d.apr) > 0 && num(d.min) <= monthlyInterest(d.balance, d.apr)){
+      warnHtml += '<div class="warn">⚠ <strong>' + esc(d.lender || 'Debt') + '</strong> — minimum doesn\'t cover the interest. At ' + fmt2(monthlyInterest(d.balance, d.apr)) + ' of interest a month, this balance will never fall on minimums alone; it needs extra money aimed at it.</div>';
+    }
+  });
+  warnBox.innerHTML = warnHtml;
+
+  if(!state.debts.some(function(d){ return num(d.balance) > 0; })){
+    box.innerHTML = '<p class="empty-msg">Add a debt above and your payoff plan appears here — debt-free date, total interest, and how much the plan saves you versus paying minimums only.</p>';
+    payoffBody.innerHTML = '';
+    return;
+  }
+  var plan = simulatePayoff(state.debts, extraMonthly, state.settings.method);
+  var mins = simulateMinimums(state.debts);
+  var planBig = plan.allCleared ? plan.months + ' months' : '—';
+  var planDate = plan.allCleared ? 'Debt-free by <strong>' + monthYearFromNow(plan.months) + '</strong>' : 'Not cleared within 100 years at these payments — raise the extra amount.';
+  var saveInt = mins.totalInterest - plan.totalInterest;
+  var saveMonths = (plan.allCleared && mins.months) ? (mins.months - plan.months) : 0;
+  box.innerHTML =
+    '<div class="results">' +
+      '<div class="result-box"><h3>YOUR PLAN (' + (state.settings.method === 'avalanche' ? 'Avalanche' : 'Snowball') + ')</h3>' +
+        '<div class="big">' + planBig + '</div><div>' + planDate + '</div>' +
+        '<dl><dt>Total interest</dt><dd>' + fmt0(plan.totalInterest) + '</dd>' +
+        '<dt>Extra per month</dt><dd>' + fmt0(extraMonthly) + '</dd>' +
+        '<dt>Total minimums</dt><dd>' + fmt0(state.debts.reduce(function(s, d){ return s + num(d.min); }, 0)) + '</dd></dl></div>' +
+      '<div class="result-box compare"><h3>MINIMUMS ONLY (for comparison)</h3>' +
+        '<div class="big">' + (mins.months ? mins.months + ' months' : '—') + '</div><div>' + (mins.months ? 'Debt-free by <strong>' + monthYearFromNow(mins.months) + '</strong>' : 'Some debts never clear on minimums alone.') + '</div>' +
+        '<dl><dt>Total interest</dt><dd>' + fmt0(mins.totalInterest) + '</dd></dl></div>' +
+    '</div>' +
+    (plan.allCleared && saveInt > 0 ? '<div class="savings-banner">The plan saves you ≈ <strong>' + fmt0(saveInt) + '</strong> in interest' + (saveMonths > 0 ? ' and gets you debt-free <strong>' + saveMonths + ' months sooner</strong>' : '') + '.</div>' : '');
+
+  var byName = {};
+  plan.perDebt.forEach(function(p){ byName[p.id] = p; });
+  var rows = state.debts.filter(function(d){ return num(d.balance) > 0; }).map(function(d){
+    var p = byName[d.id] || { clearedMonth: 0, interestPaid: 0 };
+    return { d: d, p: p };
+  }).sort(function(a, b){ return (a.p.clearedMonth || 9999) - (b.p.clearedMonth || 9999); });
+  payoffBody.innerHTML = rows.map(function(r, idx){
+    return '<tr><td>' + (idx + 1) + '</td><td>' + esc(r.d.lender || 'Debt') + '</td>' +
+      '<td class="num">' + fmt0(r.d.balance) + '</td><td class="num">' + num(r.d.apr) + '%</td>' +
+      '<td class="num">' + fmt0(r.d.min) + '</td><td class="num">' + fmt0(r.p.interestPaid) + '</td>' +
+      '<td class="num">' + (r.p.clearedMonth ? 'Month ' + r.p.clearedMonth : '—') + '</td></tr>';
+  }).join('');
+}
+debtBody.addEventListener('input', function(e){
+  var tr = e.target.closest('tr[data-did]'); if(!tr) return;
+  var d = state.debts.find(function(x){ return x.id === tr.dataset.did; }); if(!d) return;
+  var f = e.target.dataset.field; if(!f) return;
+  d[f] = (f === 'lender' || f === 'type') ? e.target.value : num(e.target.value);
+  save(); updateDebtDerived();
+});
+debtBody.addEventListener('change', function(e){
+  var tr = e.target.closest('tr[data-did]'); if(!tr) return;
+  var d = state.debts.find(function(x){ return x.id === tr.dataset.did; }); if(!d) return;
+  if(e.target.dataset.field === 'type'){ d.type = e.target.value; save(); }
+});
+debtBody.addEventListener('click', function(e){
+  var btn = e.target.closest('[data-del-debt]'); if(!btn) return;
+  state.debts = state.debts.filter(function(x){ return x.id !== btn.dataset.delDebt; });
+  save(); renderDebts();
+});
+document.getElementById('btnAddDebt').addEventListener('click', function(){
+  state.debts.push({ id: uid(), lender: '', type: 'Card', balance: 0, apr: 0, min: 0, due: '' });
+  save(); renderDebts();
+});
+document.getElementById('btnLoadExample').addEventListener('click', function(){
+  if(state.debts.some(function(d){ return d.lender || num(d.balance); }) && !confirm('This replaces the debts you have entered with the example. Continue?')) return;
+  state.debts = MAYA_EXAMPLE.map(function(d){ return { id: uid(), lender: d.lender, type: d.type, balance: d.balance, apr: d.apr, min: d.min, due: d.due }; });
+  state.settings.method = 'snowball';
+  state.settings.extraPerPaycheck = 200;
+  state.settings.paychecksPerMonth = 2;
+  document.getElementById('extraPerPaycheck').value = 200;
+  document.getElementById('paychecksPerMonth').value = 2;
+  save(); renderDebts();
+});
+document.getElementById('methodToggle').addEventListener('click', function(e){
+  var b = e.target.closest('button[data-method]'); if(!b) return;
+  state.settings.method = b.dataset.method; save(); renderPlanResults();
+});
+['extraPerPaycheck', 'paychecksPerMonth'].forEach(function(id){
+  document.getElementById(id).addEventListener('input', function(e){
+    state.settings[id] = num(e.target.value);
+    if(id === 'paychecksPerMonth'){ state.snapshot.paydays = num(e.target.value); document.getElementById('snapPaydays').value = e.target.value; }
+    save(); updateDebtDerived(); renderFundsDerived();
+  });
+});
+
+/* ---------- Paycheck Budget ---------- */
+var paycheckList = document.getElementById('paycheckList');
+function paycheckTotals(p){
+  var a = 0, ac = 0;
+  p.rows.forEach(function(r){ a += num(r.assigned); ac += num(r.actual); });
+  return { assigned: a, actual: ac, diff: a - ac };
+}
+function renderPaychecks(){
+  paycheckList.innerHTML = state.paychecks.map(function(p, pi){
+    var rowsHtml = p.rows.map(function(r, ri){
+      return '<tr>' +
+        '<td><input type="text" data-row="' + ri + '" data-rfield="label" value="' + esc(r.label) + '"></td>' +
+        '<td><input class="money" inputmode="decimal" type="number" step="0.01" min="0" data-row="' + ri + '" data-rfield="assigned" value="' + (num(r.assigned) === 0 ? '' : r.assigned) + '" placeholder="0"></td>' +
+        '<td><input class="money" inputmode="decimal" type="number" step="0.01" min="0" data-row="' + ri + '" data-rfield="actual" value="' + (num(r.actual) === 0 ? '' : r.actual) + '" placeholder="0"></td>' +
+        '<td class="num" data-diff="' + ri + '">$0</td>' +
+        '<td class="no-print"><button type="button" class="icon-btn" data-del-row="' + ri + '" title="Remove row">✕</button></td></tr>';
+    }).join('');
+    return '<div class="paycheck" data-paycheck="' + p.id + '">' +
+      '<h4>Paycheck #' + (pi + 1) + '<button type="button" class="icon-btn no-print" data-del-paycheck="' + p.id + '" title="Remove this paycheck" style="margin-left:auto">✕ remove</button></h4>' +
+      '<div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(180px,1fr))">' +
+        '<div class="field"><label>Pay date</label><input type="date" data-pfield="date" value="' + esc(p.date || '') + '"></div>' +
+        '<div class="field"><label>Take-home amount $</label><input class="money" inputmode="decimal" type="number" step="0.01" min="0" data-pfield="takeHome" value="' + (num(p.takeHome) === 0 ? '' : p.takeHome) + '" placeholder="0.00"></div>' +
+        '<div class="field"><label>Balance check</label><div><span class="ok-pill" data-pill="' + p.id + '">—</span></div></div>' +
+      '</div>' +
+      '<div class="tbl-wrap"><table><thead><tr><th>Category</th><th class="num">Assigned $</th><th class="num">Actual $</th><th class="num">Difference $</th><th class="no-print"></th></tr></thead>' +
+      '<tbody>' + rowsHtml + '</tbody>' +
+      '<tfoot><tr><td>TOTAL</td><td class="num" data-tot="assigned">$0</td><td class="num" data-tot="actual">$0</td><td class="num" data-tot="diff">$0</td><td class="no-print"></td></tr></tfoot></table></div>' +
+      '<button type="button" class="btn secondary small no-print" data-add-row="' + p.id + '" style="margin-top:10px">+ Add a row</button>' +
+    '</div>';
+  }).join('');
+  state.paychecks.forEach(function(p){ updatePaycheckTotals(p.id); });
+}
+function updatePaycheckTotals(pid){
+  var p = state.paychecks.find(function(x){ return x.id === pid; }); if(!p) return;
+  var card = paycheckList.querySelector('[data-paycheck="' + pid + '"]'); if(!card) return;
+  var t = paycheckTotals(p);
+  card.querySelector('[data-tot="assigned"]').textContent = fmt2(t.assigned);
+  card.querySelector('[data-tot="actual"]').textContent = fmt2(t.actual);
+  card.querySelector('[data-tot="diff"]').textContent = fmt2(t.diff);
+  p.rows.forEach(function(r, ri){
+    var cell = card.querySelector('[data-diff="' + ri + '"]');
+    if(cell) cell.textContent = fmt2(num(r.assigned) - num(r.actual));
+  });
+  var st = balanceStatus(t.assigned, p.takeHome);
+  var pill = card.querySelector('[data-pill="' + pid + '"]');
+  var left = Math.round((num(p.takeHome) - t.assigned) * 100) / 100;
+  pill.textContent = st.balanced ? st.label : (left > 0 ? '⚠ ' + fmt2(left) + ' left to assign' : '⚠ ' + fmt2(-left) + ' over-assigned');
+  pill.className = 'ok-pill ' + (st.balanced ? 'yes' : 'no');
+}
+paycheckList.addEventListener('input', function(e){
+  var card = e.target.closest('[data-paycheck]'); if(!card) return;
+  var p = state.paychecks.find(function(x){ return x.id === card.dataset.paycheck; }); if(!p) return;
+  if(e.target.dataset.pfield){
+    var f = e.target.dataset.pfield;
+    p[f] = (f === 'takeHome') ? num(e.target.value) : e.target.value;
+  } else if(e.target.dataset.rfield){
+    var r = p.rows[parseInt(e.target.dataset.row, 10)]; if(!r) return;
+    var rf = e.target.dataset.rfield;
+    r[rf] = (rf === 'label') ? e.target.value : num(e.target.value);
+  } else { return; }
+  save(); updatePaycheckTotals(p.id);
+});
+paycheckList.addEventListener('click', function(e){
+  var delP = e.target.closest('[data-del-paycheck]');
+  if(delP){
+    if(confirm('Remove this paycheck and its budget rows?')){
+      state.paychecks = state.paychecks.filter(function(x){ return x.id !== delP.dataset.delPaycheck; });
+      save(); renderPaychecks();
+    }
+    return;
+  }
+  var addR = e.target.closest('[data-add-row]');
+  if(addR){
+    var p1 = state.paychecks.find(function(x){ return x.id === addR.dataset.addRow; });
+    if(p1){ p1.rows.push({ label: '', assigned: 0, actual: 0 }); save(); renderPaychecks(); }
+    return;
+  }
+  var delR = e.target.closest('[data-del-row]');
+  if(delR){
+    var card = e.target.closest('[data-paycheck]');
+    var p2 = state.paychecks.find(function(x){ return x.id === card.dataset.paycheck; });
+    if(p2){ p2.rows.splice(parseInt(delR.dataset.delRow, 10), 1); save(); renderPaychecks(); }
+  }
+});
+document.getElementById('btnAddPaycheck').addEventListener('click', function(){
+  state.paychecks.push({ id: uid(), date: '', takeHome: 0, rows: defaultRows() });
+  save(); renderPaychecks();
+});
+
+
+/* ---------- Auto-fill budget ---------- */
+function splitCents(total, n){ var c = Math.round(total * 100), b = Math.floor(c / n), r = c - b * n; return Array.from({ length: n }, function(_, i){ return (b + (i < r ? 1 : 0)) / 100; }); }
+function pickCheck(due){
+  var best = null, bd = -1, last = null, ld = -1;
+  if(!due) return null;
+  state.paychecks.forEach(function(p){ if(!p.date) return; var dd = new Date(p.date + 'T00:00:00').getDate();
+    if(dd <= due && dd > bd){ best = p; bd = dd; } if(dd > ld){ last = p; ld = dd; } });
+  return best || last;
+}
+function setRow(p, label, amt){
+  var r = p.rows.find(function(x){ return x.label === label; });
+  if(!r){ r = { label: label, assigned: 0, actual: 0 }; p.rows.push(r); }
+  r.assigned = Math.round(amt * 100) / 100;
+}
+document.getElementById('btnAutofill').addEventListener('click', function(){
+  var P = state.paychecks, n = P.length, msg = document.getElementById('autofillMsg');
+  if(!n){ msg.textContent = 'Add at least one paycheck first, then auto-fill.'; return; }
+  var L = ['Minimum Debt Payments', 'EXTRA to Target Debt', 'Sinking Funds'];
+  var has = P.some(function(p){ return p.rows.some(function(r){ return L.indexOf(r.label) >= 0 && num(r.assigned) > 0; }); });
+  if(has && !confirm('This overwrites the Minimums, Extra and Sinking Funds rows in every paycheck. Continue?')) return;
+  var mins = P.map(function(){ return 0; });
+  state.debts.forEach(function(d){
+    var m = num(d.min); if(num(d.balance) <= 0 || m <= 0) return;
+    var pick = pickCheck(num(d.due));
+    if(pick) mins[P.indexOf(pick)] += m; else splitCents(m, n).forEach(function(v, i){ mins[i] += v; });
+  });
+  var ppm = num(state.settings.paychecksPerMonth) || 2;
+  var fundMo = state.funds.reduce(function(sum, f){ return num(f.months) > 0 ? sum + Math.max(0, num(f.cost) - num(f.saved)) / num(f.months) : sum; }, 0);
+  var extra = num(state.settings.extraPerPaycheck);
+  P.forEach(function(p, i){ setRow(p, L[0], mins[i]); setRow(p, L[1], extra); setRow(p, L[2], fundMo / ppm); });
+  save(); renderPaychecks();
+  msg.textContent = 'Filled minimums (each bill on the paycheck before its due date), extra to your target debt, and sinking funds. Now assign the rest: housing, groceries and so on. Each paycheck shows what is left to assign.';
+});
+
+/* ---------- Dashboard ---------- */
+function tile(a, b, c){ return '<div class="tile"><small>' + a + '</small><b>' + b + '</b><div class="sub" style="margin:2px 0 0">' + c + '</div></div>'; }
+function renderDash(){
+  var el = document.getElementById('dashCard'); if(!el) return;
+  var S = state.settings, L = state.ladder, sT = subTotals();
+  var ds = state.debts.filter(function(d){ return num(d.balance) > 0; });
+  var extra = num(S.extraPerPaycheck) * num(S.paychecksPerMonth);
+  var tot = ds.reduce(function(a, d){ return a + num(d.balance); }, 0), free = '—', target = 'Add your debts', sub = '';
+  if(ds.length){
+    var pl = simulatePayoff(state.debts, extra, S.method);
+    free = pl.allCleared ? monthYearFromNow(pl.months) : 'Add extra money';
+    var t = ds.slice().sort(function(a, b){ return S.method === 'avalanche' ? (num(b.apr) - num(a.apr)) || (num(a.balance) - num(b.balance)) : (num(a.balance) - num(b.balance)) || (num(b.apr) - num(a.apr)); })[0];
+    target = esc(t.lender || 'Debt'); sub = fmt0(t.balance) + ' at ' + num(t.apr) + '%' + (extra ? ', +' + fmt0(extra) + '/mo extra' : '');
+  }
+  var fc = 0, fs = 0; state.funds.forEach(function(f){ fc += num(f.cost); fs += num(f.saved); });
+  var s1 = num(L.stage1Target), p1 = s1 > 0 ? Math.min(100, num(L.saved1) / s1 * 100) : 0;
+  var wd = state.checkin.weekly.filter(Boolean).length;
+  var steps = [['snapshot', 'Snapshot', num(state.snapshot.takeHome) > 0], ['debts', 'Debts', ds.length > 0], ['budget', 'Paycheck budget', state.paychecks.length > 0], ['subs', 'Subscriptions', state.subs.length > 0], ['funds', 'Sinking funds', state.funds.length > 0], ['ladder', 'Emergency fund', num(L.essentials) > 0]];
+  el.innerHTML = '<h2>Your Dashboard</h2><div class="gold-rule"></div><div class="dash">' +
+    tile('Debt-free by', free, fmt0(tot) + ' total debt') +
+    tile('Next dollar goes to', target, sub || 'Nothing to pay off yet') +
+    tile('Subscriptions', state.subs.length ? fmt0(sT.tot) + '/mo' : '—', state.subs.length ? fmt0(sT.tot * 12) + '/yr' + (sT.cx ? ', ' + fmt0(sT.cx) + ' to save' : '') : 'Find hidden charges') +
+    tile('Sinking funds', state.funds.length ? Math.round(fc > 0 ? fs / fc * 100 : 0) + '% funded' : '—', fmt0(fs) + ' of ' + fmt0(fc)) +
+    tile('Starter emergency fund', Math.round(p1) + '%', fmt0(Math.max(0, s1 - num(L.saved1))) + ' to go') +
+    tile('This week', wd + ' / ' + WEEKLY_ITEMS.length, 'check-in items done') + '</div>' +
+    '<div class="chk">' + steps.map(function(x){ return '<button type="button" data-go="' + x[0] + '" class="' + (x[2] ? 'ok' : '') + '">' + (x[2] ? '✓ ' : '○ ') + x[1] + '</button>'; }).join('') + '</div>';
+}
+document.getElementById('dashCard').addEventListener('click', function(e){ var b = e.target.closest('[data-go]'); if(b) switchTab(b.dataset.go); });
+
+/* ---------- Sinking Funds ---------- */
+var fundList = document.getElementById('fundList');
+function renderFunds(){
+  fundList.innerHTML = state.funds.map(function(f){
+    return '<div class="fund" data-fund="' + f.id + '">' +
+      '<div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(150px,1fr))">' +
+        '<div class="field"><label>Fund name</label><input type="text" data-ffield="name" value="' + esc(f.name) + '" placeholder="e.g. Car repairs"></div>' +
+        '<div class="field"><label>Expected cost $</label><input class="money" inputmode="decimal" type="number" step="0.01" min="0" data-ffield="cost" value="' + (num(f.cost) === 0 ? '' : f.cost) + '" placeholder="0"></div>' +
+        '<div class="field"><label>Months to save</label><input type="number" step="1" min="0" data-ffield="months" value="' + (num(f.months) === 0 ? '' : f.months) + '" placeholder="12"></div>' +
+        '<div class="field"><label>Due / needed by</label><input type="date" data-ffield="due" value="' + esc(f.due || '') + '"></div>' +
+        '<div class="field"><label>Saved so far $</label><input class="money" inputmode="decimal" type="number" step="0.01" min="0" data-ffield="saved" value="' + (num(f.saved) === 0 ? '' : f.saved) + '" placeholder="0"></div>' +
+        '<div class="field"><label>&nbsp;</label><div><button type="button" class="icon-btn" data-del-fund="' + f.id + '" title="Remove this fund">✕ remove fund</button></div></div>' +
+      '</div>' +
+      '<div class="bar" style="margin-top:12px"><div data-fbar="' + f.id + '" style="width:0%"></div></div>' +
+      '<div class="meta" data-fmeta="' + f.id + '"></div>' +
+    '</div>';
+  }).join('');
+  document.getElementById('fundEmpty').style.display = state.funds.length ? 'none' : 'block';
+  renderFundsDerived();
+}
+function renderFundsDerived(){
+  var ppm = num(state.settings.paychecksPerMonth) || 2;
+  state.funds.forEach(function(f){
+    var cost = num(f.cost), saved = num(f.saved), months = num(f.months);
+    var left = Math.max(0, cost - saved);
+    var perMonth = months > 0 ? left / months : 0;
+    var perCheck = perMonth / ppm;
+    var pct = cost > 0 ? Math.min(100, saved / cost * 100) : 0;
+    var bar = fundList.querySelector('[data-fbar="' + f.id + '"]');
+    if(bar) bar.style.width = pct + '%';
+    var meta = fundList.querySelector('[data-fmeta="' + f.id + '"]');
+    if(meta){
+      meta.innerHTML =
+        '<span><strong>' + Math.round(pct) + '%</strong> saved</span>' +
+        '<span><strong>' + fmt0(left) + '</strong> to go</span>' +
+        '<span>Needed per month: <strong>' + (months > 0 ? fmt2(perMonth) : 'set months') + '</strong></span>' +
+        '<span>Per paycheck: <strong>' + (months > 0 ? fmt2(perCheck) : '—') + '</strong></span>' +
+        '<span>Full cost pace: <strong>' + (months > 0 ? fmt2(cost / months) + '/mo' : '—') + '</strong></span>';
+    }
+  });
+}
+fundList.addEventListener('input', function(e){
+  var wrap = e.target.closest('[data-fund]'); if(!wrap) return;
+  var f = state.funds.find(function(x){ return x.id === wrap.dataset.fund; }); if(!f) return;
+  var field = e.target.dataset.ffield; if(!field) return;
+  f[field] = (field === 'name' || field === 'due') ? e.target.value : num(e.target.value);
+  save(); renderFundsDerived();
+});
+fundList.addEventListener('change', function(e){
+  if(e.target.dataset.ffield !== 'due') return;
+  var wrap = e.target.closest('[data-fund]'); if(!wrap) return;
+  var f = state.funds.find(function(x){ return x.id === wrap.dataset.fund; }); if(!f || !e.target.value) return;
+  var due = new Date(e.target.value + 'T00:00:00');
+  var now = new Date(); now.setHours(0, 0, 0, 0);
+  var months = Math.max(1, Math.ceil((due - now) / 86400000 / 30.44));
+  f.months = months;
+  var mInput = wrap.querySelector('[data-ffield="months"]');
+  if(mInput) mInput.value = months;
+  save(); renderFundsDerived();
+});
+fundList.addEventListener('click', function(e){
+  var btn = e.target.closest('[data-del-fund]'); if(!btn) return;
+  state.funds = state.funds.filter(function(x){ return x.id !== btn.dataset.delFund; });
+  save(); renderFunds();
+});
+document.getElementById('btnAddFund').addEventListener('click', function(){
+  state.funds.push({ id: uid(), name: '', cost: 0, months: 12, due: '', saved: 0 });
+  save(); renderFunds();
+});
+
+/* ---------- Emergency Fund Ladder ---------- */
+function updateLadder(){
+  var L = state.ladder;
+  var targets = [num(L.stage1Target), num(L.essentials), num(L.essentials) * num(L.stage3Months)];
+  var saveds = [num(L.saved1), num(L.saved2), num(L.saved3)];
+  for(var i = 0; i < 3; i++){
+    var n = i + 1;
+    var t = targets[i], s = saveds[i];
+    var pct = t > 0 ? Math.min(100, s / t * 100) : 0;
+    document.getElementById('ladTarget' + n + 'Out').textContent = fmt0(t);
+    document.getElementById('ladBar' + n).style.width = pct + '%';
+    document.getElementById('ladPct' + n).textContent = Math.round(pct) + '%';
+    document.getElementById('ladLeft' + n).textContent = fmt0(Math.max(0, t - s));
+  }
+}
+function bindLadder(){
+  var L = state.ladder;
+  var map = { ladEssentials: 'essentials', ladStage1Target: 'stage1Target', ladStage3Months: 'stage3Months', ladSaved1: 'saved1', ladSaved2: 'saved2', ladSaved3: 'saved3' };
+  Object.keys(map).forEach(function(id){
+    var el = document.getElementById(id);
+    el.value = L[map[id]];
+    el.addEventListener('input', function(){ L[map[id]] = num(el.value); save(); updateLadder(); });
+  });
+  updateLadder();
+}
+
+/* ---------- Check-In ---------- */
+function renderWeekly(){
+  var list = document.getElementById('weeklyList');
+  list.innerHTML = WEEKLY_ITEMS.map(function(item, i){
+    var done = !!state.checkin.weekly[i];
+    return '<label class="check-item' + (done ? ' done' : '') + '"><input type="checkbox" data-week="' + i + '"' + (done ? ' checked' : '') + '><span>' + esc(item) + '</span></label>';
+  }).join('');
+}
+document.getElementById('weeklyList').addEventListener('change', function(e){
+  var i = e.target.dataset.week; if(i === undefined) return;
+  state.checkin.weekly[parseInt(i, 10)] = e.target.checked;
+  save(); renderWeekly();
+});
+document.getElementById('btnResetWeek').addEventListener('click', function(){
+  state.checkin.weekly = WEEKLY_ITEMS.map(function(){ return false; });
+  state.checkin.felt = '';
+  document.getElementById('feltInput').value = '';
+  save(); renderWeekly();
+});
+function bindCheckin(){
+  document.getElementById('feltInput').value = state.checkin.felt || '';
+  document.getElementById('feltInput').addEventListener('input', function(e){ state.checkin.felt = e.target.value; save(); });
+  var m = state.checkin.monthly;
+  var map = { mrMonth: ['month', 'text'], mrIncome: ['income', 'num'], mrSpent: ['spent', 'num'], mrDebtStart: ['debtStart', 'num'],
+    mrDebtEnd: ['debtEnd', 'num'], mrDebtPaid: ['debtPaid', 'num'], mrSaved: ['saved', 'num'], mrSurprise: ['surprise', 'text'],
+    mrOver: ['over', 'text'], mrAdjust: ['adjust', 'text'], mrWin: ['win', 'text'] };
+  Object.keys(map).forEach(function(id){
+    var el = document.getElementById(id);
+    var key = map[id][0], type = map[id][1];
+    el.value = (type === 'num' && num(m[key]) === 0) ? '' : m[key];
+    el.addEventListener('input', function(){ m[key] = (type === 'num') ? num(el.value) : el.value; save(); });
+  });
+}
+
+/* ---------- Subscriptions (SubWare) ---------- */
+var SUB_CY = { w: ['week', 52 / 12], m: ['month', 1], q: ['3 months', 1 / 3], y: ['year', 1 / 12] };
+var SUB_CATS = ['Streaming', 'Music', 'Software & apps', 'Gaming', 'News & reading', 'Fitness & health', 'Cloud & storage', 'Memberships & shopping', 'Other'];
+var SUB_COL = ['#0a6cff', '#00b4ff', '#0f9d35', '#f0a500', '#a85f00', '#8a9bb2', '#c93030', '#7a4dff', '#2bb3a3'];
+var SUB_USE = { daily: ['Daily', 30], weekly: ['Weekly', 4], monthly: ['Monthly', 1], rare: ['Rarely', 0.3], never: ['Never', 0] };
+var SUB_CH = [['Netflix', 'Streaming'], ['Spotify', 'Music'], ['Disney+', 'Streaming'], ['Hulu', 'Streaming'], ['YouTube Premium', 'Streaming'], ['Amazon Prime', 'Memberships & shopping'], ['iCloud', 'Cloud & storage'], ['Xbox Game Pass', 'Gaming'], ['Gym', 'Fitness & health'], ['Adobe', 'Software & apps']];
+var subEdit = null, subSummary = '';
+function $s(id){ return document.getElementById(id); }
+function subToday(){ var d = new Date(); return new Date(d.getFullYear(), d.getMonth(), d.getDate()); }
+function subPd(v){ var x = /^(\d{4})-(\d\d)-(\d\d)$/.exec(v || ''); return x ? new Date(+x[1], +x[2] - 1, +x[3]) : null; }
+function subStep(d, c){
+  if(c === 'w') return new Date(d.getFullYear(), d.getMonth(), d.getDate() + 7);
+  var n = { m: 1, q: 3, y: 12 }[c], t = new Date(d.getFullYear(), d.getMonth() + n, 1), dim = new Date(t.getFullYear(), t.getMonth() + 1, 0).getDate();
+  return new Date(t.getFullYear(), t.getMonth(), Math.min(d.getDate(), dim));
+}
+function subNext(s){ var d = subPd(s.next); if(!d) return null; if(s.trial) return d; var t = subToday(), g = 0; while(d < t && g++ < 2000) d = subStep(d, s.cyc); return d; }
+function subDays(d){ return Math.round((d - subToday()) / 864e5); }
+function subMo(s){ return num(s.amt) * SUB_CY[s.cyc][1]; }
+function subSd(d){ return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }); }
+function subWhen(n){ return n < 0 ? 'ended' : n === 0 ? 'today' : n === 1 ? 'tomorrow' : 'in ' + n + ' days'; }
+function subTotals(){
+  var act = state.subs.filter(function(s){ return !s.trial; });
+  var tot = act.reduce(function(a, s){ return a + subMo(s); }, 0);
+  var cx = state.subs.filter(function(s){ return s.cancel; }).reduce(function(a, s){ return a + subMo(s) * 12; }, 0);
+  var low = act.filter(function(s){ return !s.cancel && (s.use === 'rare' || s.use === 'never'); }).reduce(function(a, s){ return a + subMo(s) * 12; }, 0);
+  return { act: act, tot: tot, cx: cx, low: low };
+}
+function renderSubs(){
+  if(!$s('subList')) return;
+  var T = subTotals(), tot = T.tot, yr = tot * 12, th = num(state.snapshot.takeHome), subs = state.subs;
+  var dl = subs.map(function(s){ return { s: s, d: subNext(s) }; }).filter(function(x){ return x.d && subDays(x.d) >= 0 && subDays(x.d) <= 30 && !x.s.cancel; }).sort(function(a, b){ return a.d - b.d; });
+  var d30 = dl.reduce(function(a, x){ return a + num(x.s.amt); }, 0), trials = subs.length - T.act.length;
+  $s('subDash').innerHTML = '<div class="dash">' +
+    tile('You spend', fmt2(tot) + '/mo', fmt0(yr) + '/yr · ' + fmt2(yr / 365) + '/day · ' + T.act.length + ' active' + (trials ? ', ' + trials + ' on trial' : '')) +
+    tile('Of your take-home', th > 0 && tot > 0 ? (tot / th * 100).toFixed(1) + '%' : '—', th > 0 ? 'per month, from your Snapshot' : 'Add take-home on the Snapshot tab') +
+    tile('Saved if you cancel marked', fmt0(T.cx) + '/yr', 'Tap “Cancel it?” on a row') +
+    tile('Rarely or never used', fmt0(T.low) + '/yr', 'Worth a second look') +
+    tile('Charges in 30 days', fmt2(d30), dl.length + ' coming up') + '</div>';
+  $s('subDue').innerHTML = dl.length ? dl.map(function(x){ return '<div class="sb-due"><div>' + esc(x.s.name) + (x.s.trial ? '<span class="sb-bd">trial ends</span>' : '') + '<div class="sb-m">' + subSd(x.d) + ', ' + subWhen(subDays(x.d)) + '</div></div><span>' + fmt2(x.s.amt) + '</span></div>'; }).join('') :
+    '<p class="empty-msg">' + (subs.some(function(s){ return subPd(s.next); }) ? 'No charges in the next 30 days.' : 'Add next charge dates to see what is coming.') + '</p>';
+  var cat = {}; T.act.forEach(function(s){ cat[s.cat] = (cat[s.cat] || 0) + subMo(s); });
+  var ce = Object.keys(cat).map(function(k){ return [k, cat[k]]; }).sort(function(a, b){ return b[1] - a[1]; });
+  $s('subBar').innerHTML = ce.map(function(x){ return '<div style="width:' + x[1] / tot * 100 + '%;background:' + SUB_COL[SUB_CATS.indexOf(x[0]) % 9] + '"></div>'; }).join('');
+  $s('subLg').innerHTML = ce.map(function(x){ return '<div><span class="sb-dot" style="background:' + SUB_COL[SUB_CATS.indexOf(x[0]) % 9] + '"></span>' + esc(x[0]) + '<b>' + fmt2(x[1]) + '/mo</b></div>'; }).join('') || '<p class="empty-msg">Your spending by category shows here.</p>';
+  var L = subs.slice().sort(function(a, b){ return subMo(b) - subMo(a); });
+  $s('subList').innerHTML = L.length ? L.map(function(s){
+    var d = subNext(s), u = SUB_USE[s.use], cpu = u && !s.trial ? (u[1] ? fmt2(subMo(s) / u[1]) + ' per use' : 'unused, still paying') : '';
+    return '<div class="fund sb-item ' + (s.cancel ? 'cx' : '') + '"><div class="sb-top"><div><b class="sb-n">' + esc(s.name) + '</b>' + (s.trial ? '<span class="sb-bd">free trial</span>' : '') +
+      '<div class="sb-m">' + esc(s.cat) + ' · ' + fmt2(s.amt) + ' every ' + SUB_CY[s.cyc][0] + (d ? ' · ' + (s.trial ? 'billing starts ' : 'next ') + subSd(d) + ' (' + subWhen(subDays(d)) + ')' : '') + '</div>' +
+      (cpu ? '<div class="sb-m" style="color:' + (u[1] < 1 ? 'var(--warn)' : 'var(--mute)') + '">' + u[0] + ' use · ' + cpu + '</div>' : '') + '</div>' +
+      '<div class="sb-r"><b>' + fmt2(subMo(s)) + '</b> /mo<div class="sb-m">' + fmt0(subMo(s) * 12) + '/yr</div></div></div>' +
+      '<div class="sb-acts no-print"><button type="button" class="btn small secondary ' + (s.cancel ? 'on' : '') + '" data-sb-cancel="' + s.id + '">' + (s.cancel ? 'Marked to cancel' : 'Cancel it?') + '</button>' +
+      '<button type="button" class="btn small secondary" data-sb-remind="' + s.id + '">Remind me</button><button type="button" class="btn small secondary" data-sb-edit="' + s.id + '">Edit</button>' +
+      '<button type="button" class="icon-btn" data-sb-del="' + s.id + '" title="Remove">✕ remove</button></div></div>';
+  }).join('') : '<p class="empty-msg">Nothing here yet. Add your subscriptions above, then mark the ones you will cancel to see what you save.</p>';
+  subSummary = subs.length ? 'I audited my subscriptions with SaveWare by CentWare: ' + T.act.length + ' active, costing ' + fmt2(tot) + ' a month (' + fmt0(yr) + ' a year).' + (T.cx ? ' Cancelling the ones I marked saves ' + fmt0(T.cx) + ' a year.' : '') : '';
+  renderSubDebt(T);
+}
+function renderSubDebt(T){
+  var el = $s('subDebt'), S = state.settings, freed = T.cx / 12, ppm = num(S.paychecksPerMonth) || 2, applied = num(S.subRedirect);
+  var base = Math.max(0, num(S.extraPerPaycheck) * ppm - applied), ds = state.debts.filter(function(d){ return num(d.balance) > 0; });
+  if(!freed){ el.innerHTML = '<p class="sub" style="margin:0">Mark the subscriptions you will cancel (tap &ldquo;Cancel it?&rdquo; on a row). The money you free up can go straight to your debts.</p>'; return; }
+  var html = '<p class="sub" style="margin:0 0 10px">Cancelling your marked subscriptions frees up <strong>' + fmt2(freed) + ' a month</strong> (' + fmt0(T.cx) + ' a year).</p>';
+  if(!ds.length){
+    html += '<p class="sub" style="margin:0">You have no debts entered on the Debts tab. Consider adding this to your emergency fund instead.</p>';
+  } else {
+    var a = simulatePayoff(state.debts, base, S.method), b = simulatePayoff(state.debts, base + freed, S.method), line;
+    if(a.allCleared && b.allCleared){
+      var dm = a.months - b.months, di = a.totalInterest - b.totalInterest;
+      line = dm > 0 || di > 0.5 ? 'Sending it to your debts makes you debt-free <strong>' + dm + ' month' + (dm === 1 ? '' : 's') + ' sooner</strong> (' + monthYearFromNow(b.months) + ') and saves about <strong>' + fmt0(di) + '</strong> in interest.' : 'Your debts are already cleared as fast as the plan allows.';
+    } else if(!a.allCleared && b.allCleared){
+      line = 'Today your plan does not clear your debts. With this extra money you are debt-free by <strong>' + monthYearFromNow(b.months) + '</strong>.';
+    } else {
+      line = 'This extra money helps, but your debts still will not clear on the current plan. Add more on the Debts tab.';
+    }
+    html += '<div class="savings-banner" style="text-align:left;margin:0 0 12px">' + line + '</div>' +
+      '<button type="button" class="btn no-print" id="btnSubApply">' + (applied ? 'Update my extra payment' : 'Add ' + fmt2(freed / ppm) + ' to my extra payment per paycheck') + '</button>' +
+      '<p class="sub" style="margin:10px 0 0">This changes &ldquo;Extra money per paycheck&rdquo; on the Debts tab. You are the one who has to actually cancel them.</p>';
+  }
+  el.innerHTML = html;
+}
+$s('subDebt').addEventListener('click', function(e){
+  if(!e.target.closest('#btnSubApply')) return;
+  var T = subTotals(), S = state.settings, freed = T.cx / 12, ppm = num(S.paychecksPerMonth) || 2;
+  var base = Math.max(0, num(S.extraPerPaycheck) * ppm - num(S.subRedirect));
+  S.subRedirect = freed;
+  var inp = $s('extraPerPaycheck'); inp.value = Math.round((base + freed) / ppm * 100) / 100;
+  inp.dispatchEvent(new Event('input', { bubbles: true }));
+  save(); renderSubs();
+});
+function subForm(s){
+  $s('sbName').value = s ? s.name : ''; $s('sbAmt').value = s ? s.amt : ''; $s('sbCyc').value = s ? s.cyc : 'm'; $s('sbNext').value = s ? s.next || '' : '';
+  $s('sbCat').value = s ? s.cat : SUB_CATS[0]; $s('sbUse').value = s ? s.use || '' : ''; $s('sbTrial').checked = !!(s && s.trial);
+  $s('subFormTitle').textContent = s ? 'Edit subscription' : 'Add a subscription'; $s('btnSubAdd').textContent = s ? 'Save changes' : 'Add subscription';
+  $s('btnSubCancel').style.display = s ? '' : 'none';
+}
+$s('sbCat').innerHTML = SUB_CATS.map(function(c){ return '<option>' + esc(c) + '</option>'; }).join('');
+$s('sbUse').innerHTML += Object.keys(SUB_USE).map(function(k){ return '<option value="' + k + '">' + SUB_USE[k][0] + '</option>'; }).join('');
+$s('sbChips').innerHTML = SUB_CH.map(function(c, i){ return '<button type="button" data-i="' + i + '">' + esc(c[0]) + '</button>'; }).join('');
+$s('sbChips').addEventListener('click', function(e){ var b = e.target.closest('button'); if(!b) return; var c = SUB_CH[b.dataset.i]; $s('sbName').value = c[0]; $s('sbCat').value = c[1]; $s('sbAmt').focus(); });
+$s('btnSubAdd').addEventListener('click', function(){
+  var name = $s('sbName').value.trim(), amt = num($s('sbAmt').value), msg = $s('sbMsg');
+  if(!name || !(amt > 0)){ msg.textContent = 'Enter a name and the price you are charged.'; return; }
+  var o = { name: name, amt: amt, cyc: $s('sbCyc').value, next: $s('sbNext').value, cat: $s('sbCat').value, use: $s('sbUse').value, trial: $s('sbTrial').checked };
+  if(subEdit){ var s0 = state.subs.find(function(x){ return x.id === subEdit; }); if(s0) Object.keys(o).forEach(function(k){ s0[k] = o[k]; }); }
+  else { o.id = uid(); o.cancel = false; state.subs.push(o); }
+  msg.textContent = subEdit ? 'Saved.' : 'Added “' + name + '”.'; subEdit = null; subForm(null); save(); renderSubs();
+});
+$s('btnSubCancel').addEventListener('click', function(){ subEdit = null; subForm(null); $s('sbMsg').textContent = ''; });
+$s('subList').addEventListener('click', function(e){
+  var b = e.target.closest('button'); if(!b) return;
+  var k = b.dataset, id = k.sbCancel || k.sbEdit || k.sbDel || k.sbRemind, s = state.subs.find(function(x){ return x.id === id; }); if(!s) return;
+  if(k.sbRemind){ subDownload([s]); }
+  else if(k.sbCancel){ s.cancel = !s.cancel; save(); renderSubs(); }
+  else if(k.sbEdit){ subEdit = id; subForm(s); $s('subFormTitle').scrollIntoView({ behavior: 'smooth' }); }
+  else if(k.sbDel){ state.subs = state.subs.filter(function(x){ return x.id !== id; }); if(subEdit === id){ subEdit = null; subForm(null); } save(); renderSubs(); }
+});
+$s('btnSubCopy').addEventListener('click', function(){
+  var m = $s('subCopyMsg'); if(!subSummary){ m.textContent = 'Add some subscriptions first.'; return; }
+  if(navigator.clipboard && navigator.clipboard.writeText){ navigator.clipboard.writeText(subSummary).then(function(){ m.textContent = 'Copied. Paste it anywhere to share.'; }, function(){ m.textContent = subSummary; }); }
+  else m.textContent = subSummary;
+});
+/* Calendar reminders (.ics) */
+function subPad(n){ return String(n).padStart(2, '0'); }
+function subDs(d){ return d.getFullYear() + subPad(d.getMonth() + 1) + subPad(d.getDate()); }
+function subIe(t){ return String(t).replace(/\\/g, '\\\\').replace(/;/g, '\\;').replace(/,/g, '\\,').replace(/\n/g, '\\n'); }
+function subFold(l){ var o = ''; while(l.length > 73){ o += l.slice(0, 73) + '\r\n '; l = l.slice(73); } return o + l; }
+function makeIcs(list, rd){
+  var t = subToday(), out = ['BEGIN:VCALENDAR', 'VERSION:2.0', 'PRODID:-//CentWare//SaveWare//EN', 'CALSCALE:GREGORIAN', 'METHOD:PUBLISH'];
+  var stamp = new Date().toISOString().replace(/[-:]/g, '').replace(/\.\d+/, ''), made = 0, skipped = 0;
+  list.forEach(function(s){
+    var d = subNext(s); if(!d || d < t){ skipped++; return; }
+    var one = s.trial || s.cancel, mc = fmt2(s.amt), every = 'every ' + SUB_CY[s.cyc][0], rule = '';
+    if(!one) rule = 'RRULE:FREQ=' + { w: 'WEEKLY', m: 'MONTHLY', q: 'MONTHLY;INTERVAL=3', y: 'YEARLY' }[s.cyc] + ((s.cyc === 'm' || s.cyc === 'q') && d.getDate() > 28 ? ';BYMONTHDAY=29,30,31;BYSETPOS=-1' : '');
+    var title = s.trial ? 'Free trial ends: ' + s.name + ' (' + mc + ' billing starts)' : s.cancel ? 'CANCEL before it renews: ' + s.name + ' (' + mc + ')' : s.name + ' renews: ' + mc;
+    var desc = s.trial ? 'Your free trial of ' + s.name + ' ends today and billing starts at ' + mc + ' ' + every + '. Cancel now if you do not want it.' : s.cancel ? 'You marked ' + s.name + ' to cancel. It renews today for ' + mc + '. Cancel it before it charges you.' : s.name + ' charges ' + mc + ' ' + every + '. Review it or cancel before it renews.';
+    var trig = rd === 0 ? 'PT9H' : rd === 1 ? '-PT15H' : '-P' + (rd - 1) + 'DT15H';
+    out.push('BEGIN:VEVENT', 'UID:' + s.id + '-' + (one ? 'once' : 'rep') + '@saveware.centware', 'DTSTAMP:' + stamp, 'DTSTART;VALUE=DATE:' + subDs(d), 'DTEND;VALUE=DATE:' + subDs(new Date(d.getFullYear(), d.getMonth(), d.getDate() + 1)));
+    if(rule) out.push(rule);
+    out.push('SUMMARY:' + subIe(title), 'DESCRIPTION:' + subIe(desc + ' (SaveWare by CentWare)'), 'TRANSP:TRANSPARENT', 'BEGIN:VALARM', 'ACTION:DISPLAY', 'DESCRIPTION:' + subIe(title), 'TRIGGER:' + trig, 'END:VALARM', 'END:VEVENT'); made++;
+  });
+  out.push('END:VCALENDAR');
+  return { text: out.map(subFold).join('\r\n') + '\r\n', made: made, skipped: skipped };
+}
+function subDownload(list){
+  var r = makeIcs(list, num(state.settings.subRemind)), g = $s('sbRmsg');
+  if(!r.made){ g.textContent = list.length === 1 ? 'Add a next charge date to this subscription first.' : 'Add next charge dates to your subscriptions first.'; return; }
+  swSave(list.length === 1 ? 'SaveWare-' + list[0].name.replace(/[^\w-]+/g, '_') + '.ics' : 'SaveWare-reminders.ics', r.text, 'text/calendar');
+  g.textContent = 'Made ' + r.made + ' reminder' + (r.made > 1 ? 's' : '') + '.' + (r.skipped ? ' Skipped ' + r.skipped + ' with no upcoming date.' : '') + ' Open the file to add it to your calendar.';
+}
+$s('btnSubIcs').addEventListener('click', function(){ subDownload(state.subs); });
+$s('sbRemind').addEventListener('change', function(){ state.settings.subRemind = num($s('sbRemind').value); save(); });
+
+/* ---------- Saving files (browser, installed web app, or Android app) ---------- */
+function swNative(){ return !!window.SaveWareAndroid; }
+function swSave(name, text, mime){
+  if(swNative()){ window.SaveWareAndroid.saveFile(name, text, mime); return; }
+  var a = document.createElement('a');
+  a.href = URL.createObjectURL(new Blob([text], { type: mime }));
+  a.download = name;
+  document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(function(){ URL.revokeObjectURL(a.href); }, 2000);
+}
+function swPrint(){ if(swNative()) window.SaveWareAndroid.printPage(); else window.print(); }
+
+/* ---------- Toolbar ---------- */
+document.getElementById('btnExport').addEventListener('click', function(){
+  swSave('saveware-data.json', JSON.stringify(state, null, 2), 'application/json');
+});
+document.getElementById('btnImport').addEventListener('click', function(){ document.getElementById('fileImport').click(); });
+document.getElementById('fileImport').addEventListener('change', function(e){
+  var file = e.target.files[0]; if(!file) return;
+  var reader = new FileReader();
+  reader.onload = function(){
+    try {
+      var parsed = JSON.parse(reader.result);
+      if(!parsed || typeof parsed !== 'object') throw new Error('not an object');
+      if(!confirm('Importing replaces ALL data currently on this device. Continue?')){ e.target.value = ''; return; }
+      localStorage.setItem(LS_KEY, JSON.stringify(normalizeState(parsed)));
+      location.reload();
+    } catch(err){ alert('That file could not be imported. Please choose a SaveWare data file (JSON) that was exported from SaveWare.'); }
+  };
+  reader.readAsText(file);
+});
+document.getElementById('btnPrint').addEventListener('click', swPrint);
+document.getElementById('btnReset').addEventListener('click', function(){
+  if(confirm('Reset SaveWare? This permanently deletes ALL your saved data on this device (snapshot, debts, budgets, subscriptions, funds, check-ins). This cannot be undone.')){
+    try { localStorage.removeItem(LS_KEY); } catch(e){}
+    location.reload();
+  }
+});
+
+/* ---------- Init ---------- */
+state = loadState();
+bindSnapshot();
+document.getElementById('extraPerPaycheck').value = state.settings.extraPerPaycheck || '';
+document.getElementById('paychecksPerMonth').value = state.settings.paychecksPerMonth || 2;
+document.getElementById('snapPaydays').value = state.snapshot.paydays = state.settings.paychecksPerMonth || 2;
+renderDebts();
+renderPaychecks();
+renderFunds();
+subForm(null);
+$s('sbRemind').value = String(state.settings.subRemind);
+renderSubs();
+bindLadder();
+renderWeekly();
+bindCheckin();
+if(state.debts.length || state.paychecks.length || state.funds.length || state.subs.length){
+  document.getElementById('savedIndicator').textContent = 'Your saved data was loaded ✓';
+}
+renderDash();
+try{ if(navigator.storage && navigator.storage.persist) navigator.storage.persist(); }catch(e){}
+if('serviceWorker' in navigator && /^https?:$/.test(location.protocol) && !swNative()){
+  window.addEventListener('load', function(){ navigator.serviceWorker.register('sw.js').catch(function(){}); });
+}
+</script>
+</body>
+</html>
